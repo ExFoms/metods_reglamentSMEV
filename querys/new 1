@@ -1,0 +1,6 @@
+select request.MessageId, coalesce(ppl.id_pac,'0') id, usl.sumv_usl, to_char(z_sl.date_z_1,'YYYY-MM-DD'), to_char(z_sl.date_z_1,'YYYY-MM-DD'), z_sl.vidpom, z_sl.usl_ok, usl.code_usl, z_sl.lpu
+from (select '{0}' as MessageId, {1} as pid) request
+left outer join public.personal_info ppl on ppl.reg_id = request.pid
+join public.z_sl z_sl on z_sl.id_pac = ppl.id_pac
+join public.usl usl on usl.z_sl_id = z_sl.idcase where z_sl.date_z_2>='{2}' and z_sl.date_z_2<='{3}'
+order by date_z_1
