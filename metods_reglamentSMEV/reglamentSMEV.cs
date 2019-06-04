@@ -106,8 +106,7 @@ public class reglamentSMEV
                         break;
                     case "RequestMessageType":
                         adapterSmev1_2.RequestMessageType requestMessage = (adapterSmev1_2.RequestMessageType)message;
-                        if (clsLibrary.execQuery_insert(
-                             ref link_connections, null, "srz3_00_adapter"
+                        if (clsLibrary.execQuery_insert(ref link_connections, null, "srz3_00_adapter"
                             , "INSERT INTO SMEV_MESSAGES ([MESSAGEID],[REFERENCEMESSAGEID],[TRANSACTIONCODE]) VALUES "
                             , value)
                             )
@@ -237,8 +236,7 @@ public class reglamentSMEV
             comments = exception.Message;
             return false;
         }
-        if (clsLibrary.execQuery_insert(
-                ref link_connections, null, "srz3_00_adapter"
+        if (clsLibrary.execQuery_insert(ref link_connections, null, "srz3_00_adapter"
                 ,"INSERT INTO KUTFOMS_USLUGI (IDMESSAGE,OKATO,FAM,IM,OT,DR,ENP,DATEFROM,DATETO) VALUES "
                 ,value))
         {
