@@ -78,40 +78,41 @@ public class reglamentSMEV
         {
             XmlDocument xmlDocument = new XmlDocument();
             xmlDocument.Load(file);
-            adapterSmev1_2.AdapterMessage adapterMessage = new adapterSmev1_2.AdapterMessage();
-            adapterMessage = HelperXmlSmev.DeserializeFrom<adapterSmev1_2.AdapterMessage>(xmlDocument.DocumentElement);
+            adapterSmev1_3.AdapterMessage adapterMessage = new adapterSmev1_3.AdapterMessage();
+            adapterMessage = HelperXmlSmev.DeserializeFrom<adapterSmev1_3.AdapterMessage>(xmlDocument.DocumentElement);
             // Получаем метаданные 
-            adapterSmev1_2.SmevMetadata smevMetadata = adapterMessage.smevMetadata;
-            adapterSmev1_2.Message message = adapterMessage.Message;
+            adapterSmev1_3.SmevMetadata smevMetadata = adapterMessage.smevMetadata;
+            adapterSmev1_3.Message message = adapterMessage.Message;
             if (message != null)
             {
-                string value = ((smevMetadata.MessageId != null) ? clsLibrary.string_Apostrophe(smevMetadata.MessageId) : "null") + "," +
+                /*string value = ((smevMetadata.MessageId != null) ? clsLibrary.string_Apostrophe(smevMetadata.MessageId) : "null") + "," +
                     ((smevMetadata.ReferenceMessageID != null) ?
                         clsLibrary.string_Apostrophe(smevMetadata.ReferenceMessageID) :
                         clsLibrary.string_Apostrophe(smevMetadata.MessageId)) + "," +
-                    clsLibrary.string_Apostrophe(smevMetadata.TransactionCode);
+                    clsLibrary.string_Apostrophe(smevMetadata.TransactionCode);*/
                 //logQueue.Enqueue(new clsLog(DateTime.Now, 1, "Adapter_SMEV", 0, 0, DateTime.Now, DateTime.Now, meta.MessageId + "  GET / " + message.GetType().Name));
 
                 result_comments = message.GetType().Name;
                 switch (message.GetType().Name)
                 {
                     case "StatusMessage":
-                        adapterSmev1_2.RequestMessageType requestMessageType = (adapterSmev1_2.RequestMessageType)message;
+                        adapterSmev1_3.RequestMessageType requestMessageType = (adapterSmev1_3.RequestMessageType)message;
                         break;
                     case "ErrorMessage":
-                        adapterSmev1_2.ErrorMessage errorMessage = (adapterSmev1_2.ErrorMessage)message;
+                        adapterSmev1_3.ErrorMessage errorMessage = (adapterSmev1_3.ErrorMessage)message;
                         break;
                     case "ResponseMessageType":
-                        adapterSmev1_2.ResponseMessageType responseMessage = (adapterSmev1_2.ResponseMessageType)message;
+                        adapterSmev1_3.ResponseMessageType responseMessage = (adapterSmev1_3.ResponseMessageType)message;
                         break;
                     case "RequestMessageType":
-                        adapterSmev1_2.RequestMessageType requestMessage = (adapterSmev1_2.RequestMessageType)message;
-                        if (clsLibrary.execQuery_insert(ref link_connections, null, "srz3_00_adapter"
+                        adapterSmev1_3.RequestMessageType requestMessage = (adapterSmev1_3.RequestMessageType)message;
+                        /*if (clsLibrary.execQuery_insert(
+                             ref link_connections, null, "srz3_00_adapter"
                             , "INSERT INTO SMEV_MESSAGES ([MESSAGEID],[REFERENCEMESSAGEID],[TRANSACTIONCODE]) VALUES "
                             , value)
-                            )
+                            )*/
                         {
-                            result = processing_RequestMessage(ref link_connections, ref folders, smevMetadata.MessageId, requestMessage.RequestContent.content.MessagePrimaryContent, out processing_comments);
+                            result = true;// processing_RequestMessage(ref link_connections, ref folders, smevMetadata.MessageId, requestMessage.RequestContent.content.MessagePrimaryContent, out processing_comments);
                         }
                         break;
                     default: //unknown messageType
@@ -129,6 +130,7 @@ public class reglamentSMEV
         }
         return result;
     }
+
 
     public static bool processing_RequestMessage(ref List<clsConnections> link_connections, ref string[] folders, string messageId, XmlElement xmlElement, out string comments)
     {

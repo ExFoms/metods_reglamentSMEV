@@ -1,6 +1,5 @@
-﻿using System;
-using System.ServiceModel;
-using System.ServiceModel.Channels;
+﻿using System.ServiceModel;
+using System.Xml.Serialization;
 namespace adapterSmev1_2
 {
     /// <remarks/>
@@ -8,19 +7,19 @@ namespace adapterSmev1_2
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types/faults")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types/faults")]
     public partial class SystemFault : Fault
     {
     }
 
     /// <remarks/>
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ValidationFault))]
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(SystemFault))]
+    [XmlIncludeAttribute(typeof(ValidationFault))]
+    [XmlIncludeAttribute(typeof(SystemFault))]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.18408")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types/faults")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types/faults")]
     public partial class Fault : object, System.ComponentModel.INotifyPropertyChanged
     {
 
@@ -29,7 +28,7 @@ namespace adapterSmev1_2
         private string descriptionField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 0)]
+        [XmlElementAttribute(Order = 0)]
         public string code
         {
             get
@@ -44,7 +43,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 1)]
+        [XmlElementAttribute(Order = 1)]
         public string description
         {
             get
@@ -75,7 +74,7 @@ namespace adapterSmev1_2
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public partial class Status : object, System.ComponentModel.INotifyPropertyChanged
     {
 
@@ -86,7 +85,7 @@ namespace adapterSmev1_2
         private StatusParameter[] parameterField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 0)]
+        [XmlElementAttribute(Order = 0)]
         public string code
         {
             get
@@ -101,7 +100,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 1)]
+        [XmlElementAttribute(Order = 1)]
         public string description
         {
             get
@@ -116,7 +115,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("parameter", IsNullable = true, Order = 2)]
+        [XmlElementAttribute("parameter", IsNullable = true, Order = 2)]
         public StatusParameter[] parameter
         {
             get
@@ -147,7 +146,7 @@ namespace adapterSmev1_2
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(AnonymousType = true, Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public partial class StatusParameter : object, System.ComponentModel.INotifyPropertyChanged
     {
 
@@ -156,7 +155,7 @@ namespace adapterSmev1_2
         private string valueField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 0)]
+        [XmlElementAttribute(Order = 0)]
         public string key
         {
             get
@@ -171,7 +170,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 1)]
+        [XmlElementAttribute(Order = 1)]
         public string value
         {
             get
@@ -202,7 +201,7 @@ namespace adapterSmev1_2
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public partial class Reject : object, System.ComponentModel.INotifyPropertyChanged
     {
 
@@ -211,7 +210,7 @@ namespace adapterSmev1_2
         private string descriptionField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 0)]
+        [XmlElementAttribute(Order = 0)]
         public RejectCode code
         {
             get
@@ -226,7 +225,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 1)]
+        [XmlElementAttribute(Order = 1)]
         public string description
         {
             get
@@ -255,7 +254,7 @@ namespace adapterSmev1_2
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.18408")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public enum RejectCode
     {
 
@@ -277,7 +276,7 @@ namespace adapterSmev1_2
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public partial class ResponseContentType : object, System.ComponentModel.INotifyPropertyChanged
     {
 
@@ -288,7 +287,7 @@ namespace adapterSmev1_2
         private Status statusField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 0)]
+        [XmlElementAttribute(Order = 0)]
         public Content content
         {
             get
@@ -303,7 +302,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("rejects", IsNullable = true, Order = 1)]
+        [XmlElementAttribute("rejects", IsNullable = true, Order = 1)]
         public Reject[] rejects
         {
             get
@@ -318,7 +317,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 2)]
+        [XmlElementAttribute(Order = 2)]
         public Status status
         {
             get
@@ -349,7 +348,7 @@ namespace adapterSmev1_2
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public partial class Content : object, System.ComponentModel.INotifyPropertyChanged
     {
 
@@ -360,7 +359,7 @@ namespace adapterSmev1_2
         private AttachmentHeaderType[] attachmentHeaderListField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 0)]
+        [XmlElementAttribute(Order = 0)]
         public System.Xml.XmlElement MessagePrimaryContent
         {
             get
@@ -375,7 +374,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 1)]
+        [XmlElementAttribute(Order = 1)]
         public System.Xml.XmlElement PersonalSignature
         {
             get
@@ -390,8 +389,8 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayAttribute(Order = 2)]
-        [System.Xml.Serialization.XmlArrayItemAttribute("AttachmentHeader", IsNullable = false)]
+        [XmlArrayAttribute(Order = 2)]
+        [XmlArrayItemAttribute("AttachmentHeader", IsNullable = false)]
         public AttachmentHeaderType[] AttachmentHeaderList
         {
             get
@@ -422,7 +421,7 @@ namespace adapterSmev1_2
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public partial class AttachmentHeaderType : object, System.ComponentModel.INotifyPropertyChanged
     {
 
@@ -437,7 +436,7 @@ namespace adapterSmev1_2
         private bool transferMethodFieldSpecified;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 0)]
+        [XmlElementAttribute(Order = 0)]
         public string Id
         {
             get
@@ -452,7 +451,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 1)]
+        [XmlElementAttribute(Order = 1)]
         public string filePath
         {
             get
@@ -467,7 +466,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType = "base64Binary", Order = 2)]
+        [XmlElementAttribute(DataType = "base64Binary", Order = 2)]
         public byte[] SignaturePKCS7
         {
             get
@@ -482,7 +481,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 3)]
+        [XmlElementAttribute(Order = 3)]
         public TransferMethodType TransferMethod
         {
             get
@@ -497,7 +496,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [XmlIgnoreAttribute()]
         public bool TransferMethodSpecified
         {
             get
@@ -526,7 +525,7 @@ namespace adapterSmev1_2
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.18408")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public enum TransferMethodType
     {
 
@@ -542,14 +541,14 @@ namespace adapterSmev1_2
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public partial class RequestContentType : object, System.ComponentModel.INotifyPropertyChanged
     {
 
         private Content contentField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 0)]
+        [XmlElementAttribute(Order = 0)]
         public Content content
         {
             get
@@ -580,7 +579,7 @@ namespace adapterSmev1_2
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public partial class RegistryRecordRoutingType : object, System.ComponentModel.INotifyPropertyChanged
     {
 
@@ -593,7 +592,7 @@ namespace adapterSmev1_2
         private string[] identifierRoutingField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 0)]
+        [XmlElementAttribute(Order = 0)]
         public int RecordId
         {
             get
@@ -608,7 +607,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 1)]
+        [XmlElementAttribute(Order = 1)]
         public bool UseGeneralRouting
         {
             get
@@ -623,8 +622,8 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayAttribute(Order = 2)]
-        [System.Xml.Serialization.XmlArrayItemAttribute("DynamicValue", IsNullable = false)]
+        [XmlArrayAttribute(Order = 2)]
+        [XmlArrayItemAttribute("DynamicValue", IsNullable = false)]
         public string[] DynamicRouting
         {
             get
@@ -639,8 +638,8 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayAttribute(Order = 3)]
-        [System.Xml.Serialization.XmlArrayItemAttribute("IdentifierValue", IsNullable = false)]
+        [XmlArrayAttribute(Order = 3)]
+        [XmlArrayItemAttribute("IdentifierValue", IsNullable = false)]
         public string[] IdentifierRouting
         {
             get
@@ -671,7 +670,7 @@ namespace adapterSmev1_2
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public partial class RoutingInformationType : object, System.ComponentModel.INotifyPropertyChanged
     {
 
@@ -682,8 +681,8 @@ namespace adapterSmev1_2
         private RegistryRecordRoutingType[] registryRoutingField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayAttribute(Order = 0)]
-        [System.Xml.Serialization.XmlArrayItemAttribute("DynamicValue", IsNullable = false)]
+        [XmlArrayAttribute(Order = 0)]
+        [XmlArrayItemAttribute("DynamicValue", IsNullable = false)]
         public string[] DynamicRouting
         {
             get
@@ -698,8 +697,8 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayAttribute(Order = 1)]
-        [System.Xml.Serialization.XmlArrayItemAttribute("IdentifierValue", IsNullable = false)]
+        [XmlArrayAttribute(Order = 1)]
+        [XmlArrayItemAttribute("IdentifierValue", IsNullable = false)]
         public string[] IdentifierRouting
         {
             get
@@ -714,8 +713,8 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayAttribute(Order = 2)]
-        [System.Xml.Serialization.XmlArrayItemAttribute("RegistryRecordRouting", IsNullable = false)]
+        [XmlArrayAttribute(Order = 2)]
+        [XmlArrayItemAttribute("RegistryRecordRouting", IsNullable = false)]
         public RegistryRecordRoutingType[] RegistryRouting
         {
             get
@@ -746,14 +745,14 @@ namespace adapterSmev1_2
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public partial class BusinessProcessMetadata : object, System.ComponentModel.INotifyPropertyChanged
     {
 
         private System.Xml.XmlElement[] anyField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlAnyElementAttribute(Order = 0)]
+        [XmlAnyElementAttribute(Order = 0)]
         public System.Xml.XmlElement[] Any
         {
             get
@@ -784,7 +783,7 @@ namespace adapterSmev1_2
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public partial class CreateGroupIdentity : object, System.ComponentModel.INotifyPropertyChanged
     {
 
@@ -795,7 +794,7 @@ namespace adapterSmev1_2
         private string fRGUServiceRecipientDescriptionField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 0)]
+        [XmlElementAttribute(Order = 0)]
         public string FRGUServiceCode
         {
             get
@@ -810,7 +809,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 1)]
+        [XmlElementAttribute(Order = 1)]
         public string FRGUServiceDescription
         {
             get
@@ -825,7 +824,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 2)]
+        [XmlElementAttribute(Order = 2)]
         public string FRGUServiceRecipientDescription
         {
             get
@@ -856,7 +855,7 @@ namespace adapterSmev1_2
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public partial class LinkedGroupIdentity : object, System.ComponentModel.INotifyPropertyChanged
     {
 
@@ -865,7 +864,7 @@ namespace adapterSmev1_2
         private string refGroupIdField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 0)]
+        [XmlElementAttribute(Order = 0)]
         public string refClientId
         {
             get
@@ -880,7 +879,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 1)]
+        [XmlElementAttribute(Order = 1)]
         public string refGroupId
         {
             get
@@ -907,21 +906,21 @@ namespace adapterSmev1_2
     }
 
     /// <remarks/>
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(StatusMetadataType))]
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ResponseMetadataType))]
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(RequestMetadataType))]
+    [XmlIncludeAttribute(typeof(StatusMetadataType))]
+    [XmlIncludeAttribute(typeof(ResponseMetadataType))]
+    [XmlIncludeAttribute(typeof(RequestMetadataType))]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.18408")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public partial class Metadata : object, System.ComponentModel.INotifyPropertyChanged
     {
 
         private string clientIdField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 0)]
+        [XmlElementAttribute(Order = 0)]
         public string clientId
         {
             get
@@ -952,14 +951,14 @@ namespace adapterSmev1_2
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public partial class StatusMetadataType : Metadata
     {
 
         private string originalClientIdField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 0)]
+        [XmlElementAttribute(Order = 0)]
         public string originalClientId
         {
             get
@@ -979,14 +978,14 @@ namespace adapterSmev1_2
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public partial class ResponseMetadataType : Metadata
     {
 
         private string replyToClientIdField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 0)]
+        [XmlElementAttribute(Order = 0)]
         public string replyToClientId
         {
             get
@@ -1006,7 +1005,7 @@ namespace adapterSmev1_2
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public partial class RequestMetadataType : Metadata
     {
 
@@ -1031,7 +1030,7 @@ namespace adapterSmev1_2
         private RoutingInformationType routingInformationField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 0)]
+        [XmlElementAttribute(Order = 0)]
         public LinkedGroupIdentity linkedGroupIdentity
         {
             get
@@ -1046,7 +1045,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 1)]
+        [XmlElementAttribute(Order = 1)]
         public CreateGroupIdentity createGroupIdentity
         {
             get
@@ -1061,7 +1060,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 2)]
+        [XmlElementAttribute(Order = 2)]
         public string nodeId
         {
             get
@@ -1076,7 +1075,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 3)]
+        [XmlElementAttribute(Order = 3)]
         public System.DateTime eol
         {
             get
@@ -1091,7 +1090,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [XmlIgnoreAttribute()]
         public bool eolSpecified
         {
             get
@@ -1106,7 +1105,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 4)]
+        [XmlElementAttribute(Order = 4)]
         public bool testMessage
         {
             get
@@ -1121,7 +1120,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [XmlIgnoreAttribute()]
         public bool testMessageSpecified
         {
             get
@@ -1136,7 +1135,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 5)]
+        [XmlElementAttribute(Order = 5)]
         public string TransactionCode
         {
             get
@@ -1151,7 +1150,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 6)]
+        [XmlElementAttribute(Order = 6)]
         public BusinessProcessMetadata BusinessProcessMetadata
         {
             get
@@ -1166,7 +1165,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 7)]
+        [XmlElementAttribute(Order = 7)]
         public RoutingInformationType RoutingInformation
         {
             get
@@ -1182,22 +1181,22 @@ namespace adapterSmev1_2
     }
 
     /// <remarks/>
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(StatusMessage))]
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ErrorMessage))]
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ResponseMessageType))]
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(RequestMessageType))]
+    [XmlIncludeAttribute(typeof(StatusMessage))]
+    [XmlIncludeAttribute(typeof(ErrorMessage))]
+    [XmlIncludeAttribute(typeof(ResponseMessageType))]
+    [XmlIncludeAttribute(typeof(RequestMessageType))]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.18408")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public partial class Message : object, System.ComponentModel.INotifyPropertyChanged
     {
 
         private string messageTypeField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 0)]
+        [XmlElementAttribute(Order = 0)]
         public string messageType
         {
             get
@@ -1224,12 +1223,12 @@ namespace adapterSmev1_2
     }
 
     /// <remarks/>
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ErrorMessage))]
+    [XmlIncludeAttribute(typeof(ErrorMessage))]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.18408")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public partial class StatusMessage : Message
     {
 
@@ -1244,7 +1243,7 @@ namespace adapterSmev1_2
         private bool timestampFieldSpecified;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 0)]
+        [XmlElementAttribute(Order = 0)]
         public StatusMetadataType statusMetadata
         {
             get
@@ -1259,7 +1258,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 1)]
+        [XmlElementAttribute(Order = 1)]
         public StatusMessageCategory status
         {
             get
@@ -1274,7 +1273,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 2)]
+        [XmlElementAttribute(Order = 2)]
         public string details
         {
             get
@@ -1289,7 +1288,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 3)]
+        [XmlElementAttribute(Order = 3)]
         public System.DateTime timestamp
         {
             get
@@ -1304,7 +1303,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [XmlIgnoreAttribute()]
         public bool timestampSpecified
         {
             get
@@ -1322,7 +1321,7 @@ namespace adapterSmev1_2
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.18408")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public enum StatusMessageCategory
     {
 
@@ -1338,7 +1337,7 @@ namespace adapterSmev1_2
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public partial class ErrorMessage : StatusMessage
     {
 
@@ -1347,7 +1346,7 @@ namespace adapterSmev1_2
         private Fault faultField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 0)]
+        [XmlElementAttribute(Order = 0)]
         public ErrorType type
         {
             get
@@ -1362,7 +1361,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 1)]
+        [XmlElementAttribute(Order = 1)]
         public Fault fault
         {
             get
@@ -1380,7 +1379,7 @@ namespace adapterSmev1_2
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.18408")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public enum ErrorType
     {
 
@@ -1396,7 +1395,7 @@ namespace adapterSmev1_2
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public partial class ResponseMessageType : Message
     {
 
@@ -1405,7 +1404,7 @@ namespace adapterSmev1_2
         private ResponseContentType responseContentField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 0)]
+        [XmlElementAttribute(Order = 0)]
         public ResponseMetadataType ResponseMetadata
         {
             get
@@ -1420,7 +1419,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 1)]
+        [XmlElementAttribute(Order = 1)]
         public ResponseContentType ResponseContent
         {
             get
@@ -1440,7 +1439,7 @@ namespace adapterSmev1_2
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public partial class RequestMessageType : Message
     {
 
@@ -1449,7 +1448,7 @@ namespace adapterSmev1_2
         private RequestContentType requestContentField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 0)]
+        [XmlElementAttribute(Order = 0)]
         public RequestMetadataType RequestMetadata
         {
             get
@@ -1464,7 +1463,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 1)]
+        [XmlElementAttribute(Order = 1)]
         public RequestContentType RequestContent
         {
             get
@@ -1484,7 +1483,7 @@ namespace adapterSmev1_2
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public partial class SmevMetadata : object, System.ComponentModel.INotifyPropertyChanged
     {
 
@@ -1501,7 +1500,7 @@ namespace adapterSmev1_2
         private string recipientField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 0)]
+        [XmlElementAttribute(Order = 0)]
         public string MessageId
         {
             get
@@ -1516,7 +1515,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 1)]
+        [XmlElementAttribute(Order = 1)]
         public string ReferenceMessageID
         {
             get
@@ -1531,7 +1530,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 2)]
+        [XmlElementAttribute(Order = 2)]
         public string TransactionCode
         {
             get
@@ -1546,7 +1545,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 3)]
+        [XmlElementAttribute(Order = 3)]
         public string OriginalMessageID
         {
             get
@@ -1561,7 +1560,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 4)]
+        [XmlElementAttribute(Order = 4)]
         public string Sender
         {
             get
@@ -1576,7 +1575,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 5)]
+        [XmlElementAttribute(Order = 5)]
         public string Recipient
         {
             get
@@ -1607,14 +1606,14 @@ namespace adapterSmev1_2
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public partial class QueryTypeCriteria : object, System.ComponentModel.INotifyPropertyChanged
     {
 
         private TypeCriteria messageTypeCriteriaField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 0)]
+        [XmlElementAttribute(Order = 0)]
         public TypeCriteria messageTypeCriteria
         {
             get
@@ -1643,7 +1642,7 @@ namespace adapterSmev1_2
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.18408")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public enum TypeCriteria
     {
 
@@ -1659,75 +1658,75 @@ namespace adapterSmev1_2
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types/faults")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types/faults")]
     public partial class ValidationFault : Fault
     {
     }
 
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ServiceModel.ServiceContractAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter", ConfigurationName = "SMEVServiceAdapterPortType")]
+    [ServiceContractAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter", ConfigurationName = "SMEVServiceAdapterPortType")]
     public interface SMEVServiceAdapterPortType
     {
 
-        [System.ServiceModel.OperationContractAttribute(Action = "urn:Get", ReplyAction = "urn://x-artefacts-smev-gov-ru/services/service-adapter:SMEVServiceAdapterPortType" +
+        [OperationContractAttribute(Action = "urn:Get", ReplyAction = "urn://x-artefacts-smev-gov-ru/services/service-adapter:SMEVServiceAdapterPortType" +
             ":GetResponse")]
-        [System.ServiceModel.FaultContractAttribute(typeof(SystemFault), Action = "urn://x-artefacts-smev-gov-ru/services/service-adapter:SMEVServiceAdapterPortType" +
+        [FaultContractAttribute(typeof(SystemFault), Action = "urn://x-artefacts-smev-gov-ru/services/service-adapter:SMEVServiceAdapterPortType" +
             ":Get:Fault:SystemFault", Name = "SystemFault", Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types/faults")]
-        [System.ServiceModel.FaultContractAttribute(typeof(ValidationFault), Action = "urn://x-artefacts-smev-gov-ru/services/service-adapter:SMEVServiceAdapterPortType" +
+        [FaultContractAttribute(typeof(ValidationFault), Action = "urn://x-artefacts-smev-gov-ru/services/service-adapter:SMEVServiceAdapterPortType" +
             ":Get:Fault:ValidationFault", Name = "ValidationFault", Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types/faults")]
-        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults = true)]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Metadata))]
+        [XmlSerializerFormatAttribute(SupportFaults = true)]
+        [ServiceKnownTypeAttribute(typeof(Metadata))]
         GetResponse Get(GetRequest request);
 
         // CODEGEN: Идет формирование контракта на сообщение, так как операция может иметь много возвращаемых значений.
-        [System.ServiceModel.OperationContractAttribute(Action = "urn:Get", ReplyAction = "urn://x-artefacts-smev-gov-ru/services/service-adapter:SMEVServiceAdapterPortType" +
+        [OperationContractAttribute(Action = "urn:Get", ReplyAction = "urn://x-artefacts-smev-gov-ru/services/service-adapter:SMEVServiceAdapterPortType" +
             ":GetResponse")]
         System.Threading.Tasks.Task<GetResponse> GetAsync(GetRequest request);
 
         // CODEGEN: Контракт генерации сообщений с пространством имен упаковщика (urn://x-artefacts-smev-gov-ru/services/service-adapter/types) сообщения FindRequest не соответствует значению по умолчанию (urn://x-artefacts-smev-gov-ru/services/service-adapter).
-        [System.ServiceModel.OperationContractAttribute(Action = "urn:Find", ReplyAction = "urn://x-artefacts-smev-gov-ru/services/service-adapter:SMEVServiceAdapterPortType" +
+        [OperationContractAttribute(Action = "urn:Find", ReplyAction = "urn://x-artefacts-smev-gov-ru/services/service-adapter:SMEVServiceAdapterPortType" +
             ":FindResponse")]
-        [System.ServiceModel.FaultContractAttribute(typeof(SystemFault), Action = "urn://x-artefacts-smev-gov-ru/services/service-adapter:SMEVServiceAdapterPortType" +
+        [FaultContractAttribute(typeof(SystemFault), Action = "urn://x-artefacts-smev-gov-ru/services/service-adapter:SMEVServiceAdapterPortType" +
             ":Find:Fault:SystemFault", Name = "SystemFault", Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types/faults")]
-        [System.ServiceModel.FaultContractAttribute(typeof(ValidationFault), Action = "urn://x-artefacts-smev-gov-ru/services/service-adapter:SMEVServiceAdapterPortType" +
+        [FaultContractAttribute(typeof(ValidationFault), Action = "urn://x-artefacts-smev-gov-ru/services/service-adapter:SMEVServiceAdapterPortType" +
             ":Find:Fault:ValidationFault", Name = "ValidationFault", Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types/faults")]
-        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults = true)]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Metadata))]
+        [XmlSerializerFormatAttribute(SupportFaults = true)]
+        [ServiceKnownTypeAttribute(typeof(Metadata))]
         FindResponse Find(FindRequest request);
 
-        [System.ServiceModel.OperationContractAttribute(Action = "urn:Find", ReplyAction = "urn://x-artefacts-smev-gov-ru/services/service-adapter:SMEVServiceAdapterPortType" +
+        [OperationContractAttribute(Action = "urn:Find", ReplyAction = "urn://x-artefacts-smev-gov-ru/services/service-adapter:SMEVServiceAdapterPortType" +
             ":FindResponse")]
         System.Threading.Tasks.Task<FindResponse> FindAsync(FindRequest request);
 
-        [System.ServiceModel.OperationContractAttribute(Action = "urn:Send", ReplyAction = "urn://x-artefacts-smev-gov-ru/services/service-adapter:SMEVServiceAdapterPortType" +
+        [OperationContractAttribute(Action = "urn:Send", ReplyAction = "urn://x-artefacts-smev-gov-ru/services/service-adapter:SMEVServiceAdapterPortType" +
             ":SendResponse")]
-        [System.ServiceModel.FaultContractAttribute(typeof(SystemFault), Action = "urn://x-artefacts-smev-gov-ru/services/service-adapter:SMEVServiceAdapterPortType" +
+        [FaultContractAttribute(typeof(SystemFault), Action = "urn://x-artefacts-smev-gov-ru/services/service-adapter:SMEVServiceAdapterPortType" +
             ":Send:Fault:SystemFault", Name = "SystemFault", Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types/faults")]
-        [System.ServiceModel.FaultContractAttribute(typeof(ValidationFault), Action = "urn://x-artefacts-smev-gov-ru/services/service-adapter:SMEVServiceAdapterPortType" +
+        [FaultContractAttribute(typeof(ValidationFault), Action = "urn://x-artefacts-smev-gov-ru/services/service-adapter:SMEVServiceAdapterPortType" +
             ":Send:Fault:ValidationFault", Name = "ValidationFault", Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types/faults")]
-        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults = true)]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Metadata))]
+        [XmlSerializerFormatAttribute(SupportFaults = true)]
+        [ServiceKnownTypeAttribute(typeof(Metadata))]
         SendResponse Send(SendRequest request);
 
         // CODEGEN: Идет формирование контракта на сообщение, так как операция может иметь много возвращаемых значений.
-        [System.ServiceModel.OperationContractAttribute(Action = "urn:Send", ReplyAction = "urn://x-artefacts-smev-gov-ru/services/service-adapter:SMEVServiceAdapterPortType" +
+        [OperationContractAttribute(Action = "urn:Send", ReplyAction = "urn://x-artefacts-smev-gov-ru/services/service-adapter:SMEVServiceAdapterPortType" +
             ":SendResponse")]
         System.Threading.Tasks.Task<SendResponse> SendAsync(SendRequest request);
     }
 
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ServiceModel.MessageContractAttribute(WrapperName = "MessageQuery", WrapperNamespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", IsWrapped = true)]
+    [MessageContractAttribute(WrapperName = "MessageQuery", WrapperNamespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", IsWrapped = true)]
     public partial class GetRequest
     {
 
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 0)]
+        [MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 0)]
         public string itSystem;
 
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 1)]
+        [MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 1)]
         public string nodeId;
 
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 2)]
+        [MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 2)]
         public QueryTypeCriteria specificQuery;
 
         public GetRequest()
@@ -1744,14 +1743,14 @@ namespace adapterSmev1_2
 
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ServiceModel.MessageContractAttribute(WrapperName = "QueryResult", WrapperNamespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", IsWrapped = true)]
+    [MessageContractAttribute(WrapperName = "QueryResult", WrapperNamespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", IsWrapped = true)]
     public partial class GetResponse
     {
 
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 0)]
+        [MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 0)]
         public SmevMetadata smevMetadata;
 
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 1)]
+        [MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 1)]
         public Message Message;
 
         public GetResponse()
@@ -1770,7 +1769,7 @@ namespace adapterSmev1_2
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public partial class FindTypeCriteria : object, System.ComponentModel.INotifyPropertyChanged
     {
 
@@ -1779,7 +1778,7 @@ namespace adapterSmev1_2
         private MessageClientIdCriteria messageClientIdCriteriaField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 0)]
+        [XmlElementAttribute(Order = 0)]
         public MessageIntervalCriteria messagePeriodCriteria
         {
             get
@@ -1794,7 +1793,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 1)]
+        [XmlElementAttribute(Order = 1)]
         public MessageClientIdCriteria messageClientIdCriteria
         {
             get
@@ -1825,7 +1824,7 @@ namespace adapterSmev1_2
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public partial class MessageIntervalCriteria : object, System.ComponentModel.INotifyPropertyChanged
     {
 
@@ -1836,7 +1835,7 @@ namespace adapterSmev1_2
         private bool toFieldSpecified;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 0)]
+        [XmlElementAttribute(Order = 0)]
         public System.DateTime from
         {
             get
@@ -1851,7 +1850,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 1)]
+        [XmlElementAttribute(Order = 1)]
         public System.DateTime to
         {
             get
@@ -1866,7 +1865,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [XmlIgnoreAttribute()]
         public bool toSpecified
         {
             get
@@ -1897,7 +1896,7 @@ namespace adapterSmev1_2
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public partial class MessageClientIdCriteria : object, System.ComponentModel.INotifyPropertyChanged
     {
 
@@ -1906,7 +1905,7 @@ namespace adapterSmev1_2
         private ClientIdCriteria clientIdCriteriaField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 0)]
+        [XmlElementAttribute(Order = 0)]
         public string clientId
         {
             get
@@ -1921,7 +1920,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 1)]
+        [XmlElementAttribute(Order = 1)]
         public ClientIdCriteria clientIdCriteria
         {
             get
@@ -1950,7 +1949,7 @@ namespace adapterSmev1_2
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.18408")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
     public enum ClientIdCriteria
     {
 
@@ -1969,8 +1968,8 @@ namespace adapterSmev1_2
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
-    [System.Xml.Serialization.XmlRootAttribute("OrderStatusEventRequest", Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", IsNullable = false, ElementName = "AdapterMessage")]
+    [XmlTypeAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types")]
+    [XmlRootAttribute("OrderStatusEventRequest", Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", IsNullable = false, ElementName = "AdapterMessage")]
 
     public partial class AdapterMessage : object, System.ComponentModel.INotifyPropertyChanged
     {
@@ -1980,7 +1979,7 @@ namespace adapterSmev1_2
         private Message messageField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 0)]
+        [XmlElementAttribute(Order = 0)]
         public SmevMetadata smevMetadata
         {
             get
@@ -1995,7 +1994,7 @@ namespace adapterSmev1_2
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order = 1)]
+        [XmlElementAttribute(Order = 1)]
         public Message Message
         {
             get
@@ -2024,14 +2023,14 @@ namespace adapterSmev1_2
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.ServiceModel.MessageContractAttribute(WrapperName = "FindMessageQuery", WrapperNamespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", IsWrapped = true)]
+    [MessageContractAttribute(WrapperName = "FindMessageQuery", WrapperNamespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", IsWrapped = true)]
     public partial class FindRequest
     {
 
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 0)]
+        [MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 0)]
         public string itSystem;
 
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 1)]
+        [MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 1)]
         public FindTypeCriteria specificQuery;
 
         public FindRequest()
@@ -2048,12 +2047,12 @@ namespace adapterSmev1_2
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.ServiceModel.MessageContractAttribute(WrapperName = "QueryResultList", WrapperNamespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", IsWrapped = true)]
+    [MessageContractAttribute(WrapperName = "QueryResultList", WrapperNamespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", IsWrapped = true)]
     public partial class FindResponse
     {
 
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 0)]
-        [System.Xml.Serialization.XmlElementAttribute("QueryResult")]
+        [MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 0)]
+        [XmlElementAttribute("QueryResult")]
         public AdapterMessage[] QueryResult;
 
         public FindResponse()
@@ -2068,17 +2067,17 @@ namespace adapterSmev1_2
 
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ServiceModel.MessageContract(WrapperName = "ClientMessage", WrapperNamespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", IsWrapped = true)]
+    [MessageContract(WrapperName = "ClientMessage", WrapperNamespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", IsWrapped = true)]
     public partial class SendRequest
     {
 
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 0)]
+        [MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 0)]
         public string itSystem;
 
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 1)]
+        [MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 1)]
         public RequestMessageType RequestMessage;
 
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 2)]
+        [MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 2)]
         public ResponseMessageType ResponseMessage;
 
         public SendRequest()
@@ -2097,17 +2096,17 @@ namespace adapterSmev1_2
     //Добавлено для формирования сообщения
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ServiceModel.MessageContract(WrapperName = "ClientMessage", WrapperNamespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", IsWrapped = true)]
+    [MessageContract(WrapperName = "ClientMessage", WrapperNamespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", IsWrapped = true)]
     public partial class ClientMessage
     {
 
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 0)]
+        [MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 0)]
         public string itSystem;
 
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 1)]
+        [MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 1)]
         public RequestMessageType RequestMessage;
 
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 2)]
+        [MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 2)]
         public ResponseMessageType ResponseMessage;
 
         public ClientMessage()
@@ -2126,14 +2125,14 @@ namespace adapterSmev1_2
 
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ServiceModel.MessageContractAttribute(WrapperName = "MessageResult", WrapperNamespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", IsWrapped = true)]
+    [MessageContractAttribute(WrapperName = "MessageResult", WrapperNamespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", IsWrapped = true)]
     public partial class SendResponse
     {
 
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 0)]
+        [MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 0)]
         public string itSystem;
 
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 1)]
+        [MessageBodyMemberAttribute(Namespace = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types", Order = 1)]
         public string MessageId;
 
         public SendResponse()
@@ -2148,13 +2147,13 @@ namespace adapterSmev1_2
     }
 
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public interface SMEVServiceAdapterPortTypeChannel : SMEVServiceAdapterPortType, System.ServiceModel.IClientChannel
+    public interface SMEVServiceAdapterPortTypeChannel : SMEVServiceAdapterPortType, IClientChannel
     {
     }
 
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class SMEVServiceAdapterPortTypeClient : System.ServiceModel.ClientBase<SMEVServiceAdapterPortType>, SMEVServiceAdapterPortType
+    public partial class SMEVServiceAdapterPortTypeClient : ClientBase<SMEVServiceAdapterPortType>, SMEVServiceAdapterPortType
     {
 
         public SMEVServiceAdapterPortTypeClient()
@@ -2171,12 +2170,12 @@ namespace adapterSmev1_2
         {
         }
 
-        public SMEVServiceAdapterPortTypeClient(string endpointConfigurationName, System.ServiceModel.EndpointAddress remoteAddress) :
+        public SMEVServiceAdapterPortTypeClient(string endpointConfigurationName, EndpointAddress remoteAddress) :
             base(endpointConfigurationName, remoteAddress)
         {
         }
 
-        public SMEVServiceAdapterPortTypeClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) :
+        public SMEVServiceAdapterPortTypeClient(System.ServiceModel.Channels.Binding binding, EndpointAddress remoteAddress) :
             base(binding, remoteAddress)
         {
         }
