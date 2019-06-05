@@ -38,7 +38,8 @@
     <Reference Include="lib_classesConections">
       <HintPath>..\..\..\..\..\release\dll\lib_classesConections.dll</HintPath>
     </Reference>
-    <Reference Include="lib_classesSMEV">
+    <Reference Include="lib_classesSMEV, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\release\dll\lib_classesSMEV.dll</HintPath>
     </Reference>
     <Reference Include="lib_metodsMain, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -56,8 +57,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="adapterSmev1_3.cs" />
-    <Compile Include="adapterSmev1_2.cs" />
     <Compile Include="reglamentSMEV.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

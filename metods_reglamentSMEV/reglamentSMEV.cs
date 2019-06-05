@@ -85,11 +85,11 @@ public class reglamentSMEV
             adapterSmev1_3.Message message = adapterMessage.Message;
             if (message != null)
             {
-                /*string value = ((smevMetadata.MessageId != null) ? clsLibrary.string_Apostrophe(smevMetadata.MessageId) : "null") + "," +
+                string value = ((smevMetadata.MessageId != null) ? clsLibrary.string_Apostrophe(smevMetadata.MessageId) : "null") + "," +
                     ((smevMetadata.ReferenceMessageID != null) ?
                         clsLibrary.string_Apostrophe(smevMetadata.ReferenceMessageID) :
                         clsLibrary.string_Apostrophe(smevMetadata.MessageId)) + "," +
-                    clsLibrary.string_Apostrophe(smevMetadata.TransactionCode);*/
+                    clsLibrary.string_Apostrophe(smevMetadata.TransactionCode);
                 //logQueue.Enqueue(new clsLog(DateTime.Now, 1, "Adapter_SMEV", 0, 0, DateTime.Now, DateTime.Now, meta.MessageId + "  GET / " + message.GetType().Name));
 
                 result_comments = message.GetType().Name;
@@ -106,13 +106,13 @@ public class reglamentSMEV
                         break;
                     case "RequestMessageType":
                         adapterSmev1_3.RequestMessageType requestMessage = (adapterSmev1_3.RequestMessageType)message;
-                        /*if (clsLibrary.execQuery_insert(
+                        if (/*clsLibrary.execQuery_insert(
                              ref link_connections, null, "srz3_00_adapter"
                             , "INSERT INTO SMEV_MESSAGES ([MESSAGEID],[REFERENCEMESSAGEID],[TRANSACTIONCODE]) VALUES "
-                            , value)
-                            )*/
+                            , value)*/ 1 ==1
+                            )
                         {
-                            result = true;// processing_RequestMessage(ref link_connections, ref folders, smevMetadata.MessageId, requestMessage.RequestContent.content.MessagePrimaryContent, out processing_comments);
+                            result = processing_RequestMessage(ref link_connections, ref folders, smevMetadata.MessageId, requestMessage.RequestContent.content.MessagePrimaryContent, out processing_comments, file);
                         }
                         break;
                     default: //unknown messageType
@@ -132,11 +132,10 @@ public class reglamentSMEV
     }
 
 
-    public static bool processing_RequestMessage(ref List<clsConnections> link_connections, ref string[] folders, string messageId, XmlElement xmlElement, out string comments)
+    public static bool processing_RequestMessage(ref List<clsConnections> link_connections, ref string[] folders, string messageId, XmlElement xmlElement, out string comments, string file = "")
     {
         comments = String.Empty;
         bool result = false;
-        string file = String.Empty;
         ReglamentLinker reglamentLinker = new ReglamentLinker();
         try
         {
@@ -150,8 +149,7 @@ public class reglamentSMEV
                 case "VS01285v001_TABL00":
                 case "VS01287v001_TABL00":
                 case "VS01284v001_TABL00":
-                    result = clsLibrary.execQuery(ref link_connections, null, "srz3_00_adapter",
-                           String.Format("update SMEV_MESSAGES set TipData = '{0}' where MessageID = '{1}'", reglamentLinker.link.prefixFile, messageId));
+                    result = true; // clsLibrary.execQuery(ref link_connections, null, "srz3_00_adapter",String.Format("update SMEV_MESSAGES set TipData = '{0}' where MessageID = '{1}'", reglamentLinker.link.prefixFile, messageId));
                     break;
                 default: //unknown schema
                     result = clsLibrary.execQuery(ref link_connections, null, "srz3_00_adapter",
@@ -180,7 +178,18 @@ public class reglamentSMEV
                     case "VS01285v001_TABL00": //Сведения из ЕГР ЗАГС о государственной регистрации смерти
                     case "VS01287v001_TABL00": //Сведения и ЕГР ЗАГС о государственной регистрации рождения                
                     case "VS01284v001_TABL00": //Сведения из ЕГР ЗАГС о государственной регистрации перемены имени
-                        result = saveXML_toFile1(ref xmlElement, Path.Combine(folders[1], String.Format("{0}-{1}.xml", reglamentLinker.link.prefixFile, messageId)), Encoding.UTF8);
+                        //result = saveXML_toFile1(ref xmlElement, Path.Combine(folders[1], String.Format("{0}-{1}.xml", reglamentLinker.link.prefixFile, messageId)), Encoding.UTF8);
+                        try
+                        {
+                            File.Move(file, Path.Combine(folders[0], String.Format("{0}-{1}.xml", reglamentLinker.link.prefixFile, messageId)));
+                            File.Delete(file);
+                            result = true;
+                        }
+                        catch
+                        {
+                            comments = "Can't create file";
+                            result = false;
+                        }
                         break;
                     default: //unknown schema
                         break;
