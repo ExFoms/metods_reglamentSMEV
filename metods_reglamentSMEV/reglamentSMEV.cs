@@ -24,7 +24,7 @@ public class reglamentSMEV
             adapterSmev1_2.Message message = adapterMessage.Message;
             if (message != null)
             {
-                string value = ((smevMetadata.MessageId != null) ? clsLibrary.string_Apostrophe(smevMetadata.MessageId) : "null") + "," +
+                string value = clsLibrary.string_Apostrophe(smevMetadata.MessageId) + "," +
                     ((smevMetadata.ReferenceMessageID != null) ?
                         clsLibrary.string_Apostrophe(smevMetadata.ReferenceMessageID) :
                         clsLibrary.string_Apostrophe(smevMetadata.MessageId)) + "," +
@@ -85,10 +85,8 @@ public class reglamentSMEV
             adapterSmev1_3.Message message = adapterMessage.Message;
             if (message != null)
             {
-                string value = ((smevMetadata.MessageId != null) ? clsLibrary.string_Apostrophe(smevMetadata.MessageId) : "null") + "," +
-                    ((smevMetadata.ReferenceMessageID != null) ?
-                        clsLibrary.string_Apostrophe(smevMetadata.ReferenceMessageID) :
-                        clsLibrary.string_Apostrophe(smevMetadata.MessageId)) + "," +
+                string value = clsLibrary.string_Apostrophe(smevMetadata.MessageId) + "," +
+                    ((smevMetadata.ReferenceMessageID != null) ? clsLibrary.string_Apostrophe(smevMetadata.ReferenceMessageID) : clsLibrary.string_Apostrophe(smevMetadata.MessageId)) + "," +
                     clsLibrary.string_Apostrophe(smevMetadata.TransactionCode);
                 //logQueue.Enqueue(new clsLog(DateTime.Now, 1, "Adapter_SMEV", 0, 0, DateTime.Now, DateTime.Now, meta.MessageId + "  GET / " + message.GetType().Name));
 
@@ -106,10 +104,10 @@ public class reglamentSMEV
                         break;
                     case "RequestMessageType":
                         adapterSmev1_3.RequestMessageType requestMessage = (adapterSmev1_3.RequestMessageType)message;
-                        if (/*clsLibrary.execQuery_insert(
+                        if (clsLibrary.execQuery_insert(
                              ref link_connections, null, "srz3_00_adapter"
                             , "INSERT INTO SMEV_MESSAGES ([MESSAGEID],[REFERENCEMESSAGEID],[TRANSACTIONCODE]) VALUES "
-                            , value)*/ 1 ==1
+                            , value)
                             )
                         {
                             result = processing_RequestMessage(ref link_connections, ref folders, smevMetadata.MessageId, requestMessage.RequestContent.content.MessagePrimaryContent, out processing_comments, file);
@@ -130,8 +128,6 @@ public class reglamentSMEV
         }
         return result;
     }
-
-
     public static bool processing_RequestMessage(ref List<clsConnections> link_connections, ref string[] folders, string messageId, XmlElement xmlElement, out string comments, string file = "")
     {
         comments = String.Empty;
@@ -140,8 +136,8 @@ public class reglamentSMEV
         try
         {
             reglamentLinker.getLink(ref xmlElement);
-
-            switch (reglamentLinker.link.schemaClassRoot.Name) //Указываем тип данных
+            //Указываем тип данных
+            switch (reglamentLinker.link.schemaClassRoot.Name) 
             {
                 case "VS00648v001_PFR001":
                 case "VS01112v001_TABL00":
@@ -149,15 +145,15 @@ public class reglamentSMEV
                 case "VS01285v001_TABL00":
                 case "VS01287v001_TABL00":
                 case "VS01284v001_TABL00":
-                    result = true; // clsLibrary.execQuery(ref link_connections, null, "srz3_00_adapter",String.Format("update SMEV_MESSAGES set TipData = '{0}' where MessageID = '{1}'", reglamentLinker.link.prefixFile, messageId));
+                    result = clsLibrary.execQuery(ref link_connections, null, "srz3_00_adapter",String.Format("update SMEV_MESSAGES set TipData = '{0}' where MessageID = '{1}'", reglamentLinker.link.prefixFile, messageId));
                     break;
                 default: //unknown schema
-                    result = clsLibrary.execQuery(ref link_connections, null, "srz3_00_adapter",
-                            String.Format("update SMEV_MESSAGES set TipData = '{0}' where MessageID = '{1}'", "UNKNONE", messageId));
+                    clsLibrary.execQuery(ref link_connections, null, "srz3_00_adapter",String.Format("update SMEV_MESSAGES set TipData = '{0}' where MessageID = '{1}'", "UNKNONE", messageId));
                     break;
             }
-            if (result)
+            if(result)
             {
+                //Записываем данные в базу
                 switch (reglamentLinker.link.schemaClassRoot.Name)
                 {
                     case "VS00648v001_PFR001": //Сведения ПФР о СНИЛСе
@@ -169,34 +165,52 @@ public class reglamentSMEV
                                                result = true;*/
                         break;
                     case "VS01112v001_TABL00": //Прием заявления о выборе СМО в ТФОМС
-                                               //processing_VS01112v001_TABL00(messageId, xmlElement, out result);                
-                        result = false;
+                                               //processing_VS01112v001_TABL00(messageId, xmlElement, out result);        
                         break;
                     case "VS01113v001_TABL00": //Сведения ТФОМС об оказанных медицинских услугах и их стоимости
                         result = processing_VS01113v001_TABL00(ref link_connections, messageId, xmlElement, out comments);
                         break;
                     case "VS01285v001_TABL00": //Сведения из ЕГР ЗАГС о государственной регистрации смерти
-                    case "VS01287v001_TABL00": //Сведения и ЕГР ЗАГС о государственной регистрации рождения                
-                    case "VS01284v001_TABL00": //Сведения из ЕГР ЗАГС о государственной регистрации перемены имени
-                        //result = saveXML_toFile1(ref xmlElement, Path.Combine(folders[1], String.Format("{0}-{1}.xml", reglamentLinker.link.prefixFile, messageId)), Encoding.UTF8);
-                        try
-                        {
-                            File.Move(file, Path.Combine(folders[0], String.Format("{0}-{1}.xml", reglamentLinker.link.prefixFile, messageId)));
-                            File.Delete(file);
-                            result = true;
-                        }
-                        catch
-                        {
-                            comments = "Can't create file";
-                            result = false;
-                        }
+                        result = processing_VS01285v001_TABL00(ref link_connections, messageId, xmlElement, out comments);
                         break;
-                    default: //unknown schema
+                    case "VS01287v001_TABL00": //Сведения и ЕГР ЗАГС о государственной регистрации рождения  
+                        result = processing_VS01287v001_TABL00(ref link_connections, messageId, xmlElement, out comments);
+                        break;
+                    case "VS01284v001_TABL00": //Сведения из ЕГР ЗАГС о государственной регистрации перемены имени        
+                        result = processing_VS01284v001_TABL00(ref link_connections, messageId, xmlElement, out comments);
                         break;
                 }
+                if (!result) throw new Exception("Ошибка записи контента в базу");
+                else
+                {
+                    //Для данных ЗАГСА готовим пакеты для ручной загрузки в СРЗ
+                    switch (reglamentLinker.link.schemaClassRoot.Name)
+                    {
+                        case "VS01285v001_TABL00": //Сведения из ЕГР ЗАГС о государственной регистрации смерти
+                        case "VS01287v001_TABL00": //Сведения и ЕГР ЗАГС о государственной регистрации рождения                
+                        case "VS01284v001_TABL00": //Сведения из ЕГР ЗАГС о государственной регистрации перемены имени
+                            try
+                            {
+                                File.Copy(file, Path.Combine(folders[0], String.Format("{0}-{1}.xml", reglamentLinker.link.prefixFile, messageId)), true);
+                            }
+                            catch
+                            {
+                                comments = "Ошибка создания файла по сведениям ЗАГС, для загрузки в СРЗ";
+                                result = false;
+                            }
+                            break;
+                    }
+                    clsLibrary.execQuery(ref link_connections, null, "srz3_00_adapter",String.Format("update SMEV_MESSAGES set state = 0 where MessageID = '{0}'", messageId));
+                }
+
+
             }
+
         }
-        catch { }
+        catch
+        {
+            result = false;
+        }
         return result;
     }
     private static bool processing_VS01113v001_TABL00(ref List<clsConnections> link_connections, string messageId, XmlElement xmlElement, out string comments)
@@ -250,6 +264,126 @@ public class reglamentSMEV
         if (clsLibrary.execQuery_insert(ref link_connections, null, "srz3_00_adapter"
                 ,"INSERT INTO KUTFOMS_USLUGI (IDMESSAGE,OKATO,FAM,IM,OT,DR,ENP,DATEFROM,DATETO) VALUES "
                 ,value))
+        {
+            return true;
+        }
+        else
+        {
+            comments = "ошибка вставки данных";
+            return false;
+        }
+    }
+    private static bool processing_VS01285v001_TABL00(ref List<clsConnections> link_connections, string messageId, XmlElement xmlElement, out string comments)
+    /* 
+     * Сведения из ЕГР ЗАГС о государственной регистрации смерти 
+     */
+    {
+        comments = string.Empty;
+        XmlDocument ИдСведений = new XmlDocument();
+        try
+        {
+            XmlDocument xmlDocument = new XmlDocument();
+            xmlDocument.LoadXml(xmlElement.InnerXml);
+            var inputData = HelperXmlSmev.DeserializeFrom<adapterSmev1_3_smev_message_exchange_directive.Registry>((XmlElement)xmlElement.FirstChild);
+            if (inputData == null) throw new System.ArgumentException("неверная схема");
+            XmlElement root = ИдСведений.DocumentElement;
+            XmlElement element1 = ИдСведений.CreateElement(string.Empty, "ИдСведений", string.Empty);
+            ИдСведений.AppendChild(element1);
+            foreach (adapterSmev1_3_smev_message_exchange_directive.RegistryRecord registryRecord in inputData.RegistryRecord)
+            {
+                var ROGDZPRequest = HelperXmlSmev.DeserializeFrom<VS01285v001_TABL00.FATALZPRequest>(registryRecord.Record.RecordContent.Any);
+                XmlElement element2 = ИдСведений.CreateElement(string.Empty, "ИдСвед", string.Empty);
+                element1.AppendChild(element2);
+                element2.AppendChild(ИдСведений.CreateTextNode(ROGDZPRequest.ИдСвед));
+            }
+        }
+        catch (Exception exception)
+        {
+            comments = exception.Message;
+            return false;
+        }
+        if (clsLibrary.execQuery(ref link_connections, null, "srz3_00_adapter",
+                string.Format("UPDATE SMEV_MESSAGES set request = '{0}' where MessageID = '{1}'", ИдСведений.InnerXml, messageId)))
+        {
+            return true;
+        }
+        else
+        {
+            comments = "ошибка вставки данных";
+            return false;
+        }
+    }
+    private static bool processing_VS01287v001_TABL00(ref List<clsConnections> link_connections, string messageId, XmlElement xmlElement, out string comments)
+    /* 
+     * Сведения и ЕГР ЗАГС о государственной регистрации рождения 
+     */
+    {
+        comments = string.Empty;
+        XmlDocument ИдСведений = new XmlDocument();
+        try
+        {
+            XmlDocument xmlDocument = new XmlDocument();
+            xmlDocument.LoadXml(xmlElement.InnerXml);
+            var inputData = HelperXmlSmev.DeserializeFrom<adapterSmev1_3_smev_message_exchange_directive.Registry>((XmlElement)xmlElement.FirstChild);
+            if (inputData == null) throw new System.ArgumentException("неверная схема");
+            XmlElement root = ИдСведений.DocumentElement;
+            XmlElement element1 = ИдСведений.CreateElement(string.Empty, "ИдСведений", string.Empty);
+            ИдСведений.AppendChild(element1);
+            foreach (adapterSmev1_3_smev_message_exchange_directive.RegistryRecord registryRecord in inputData.RegistryRecord)
+            {
+                var ROGDZPRequest = HelperXmlSmev.DeserializeFrom<VS01287v001_TABL00.ROGDZPRequest>(registryRecord.Record.RecordContent.Any);
+                XmlElement element2 = ИдСведений.CreateElement(string.Empty, "ИдСвед", string.Empty);
+                element1.AppendChild(element2);
+                element2.AppendChild(ИдСведений.CreateTextNode(ROGDZPRequest.ИдСвед));
+            }
+        }
+        catch (Exception exception)
+        {
+            comments = exception.Message;
+            return false;
+        }
+        if (clsLibrary.execQuery(ref link_connections, null, "srz3_00_adapter",
+                string.Format("UPDATE SMEV_MESSAGES set request = '{0}' where MessageID = '{1}'", ИдСведений.InnerXml, messageId)))
+        {
+            return true;
+        }
+        else
+        {
+            comments = "ошибка вставки данных";
+            return false;
+        }
+    }
+    private static bool processing_VS01284v001_TABL00(ref List<clsConnections> link_connections, string messageId, XmlElement xmlElement, out string comments)
+    /* 
+     * Сведения из ЕГР ЗАГС о государственной регистрации перемены имени 
+     */
+    {
+        comments = string.Empty;
+        XmlDocument ИдСведений = new XmlDocument();
+        try
+        {
+            XmlDocument xmlDocument = new XmlDocument();
+            xmlDocument.LoadXml(xmlElement.InnerXml);
+            var inputData = HelperXmlSmev.DeserializeFrom<adapterSmev1_3_smev_message_exchange_directive.Registry>((XmlElement)xmlElement.FirstChild);
+            if (inputData == null) throw new System.ArgumentException("неверная схема");
+            XmlElement root = ИдСведений.DocumentElement;
+            XmlElement element1 = ИдСведений.CreateElement(string.Empty, "ИдСведений", string.Empty);
+            ИдСведений.AppendChild(element1);
+            foreach (adapterSmev1_3_smev_message_exchange_directive.RegistryRecord registryRecord in inputData.RegistryRecord)
+            {
+                var ROGDZPRequest = HelperXmlSmev.DeserializeFrom<VS01284v001_TABL00.PERNAMEZPRequest>(registryRecord.Record.RecordContent.Any);
+                XmlElement element2 = ИдСведений.CreateElement(string.Empty, "ИдСвед", string.Empty);
+                element1.AppendChild(element2);
+                element2.AppendChild(ИдСведений.CreateTextNode(ROGDZPRequest.ИдСвед));
+            }
+        }
+        catch (Exception exception)
+        {
+            comments = exception.Message;
+            return false;
+        }
+        if (clsLibrary.execQuery(ref link_connections, null, "srz3_00_adapter",
+                string.Format("UPDATE SMEV_MESSAGES set request = '{0}' where MessageID = '{1}'", ИдСведений.InnerXml, messageId)))
         {
             return true;
         }
@@ -435,8 +569,9 @@ public class reglamentSMEV
         catch { }
         if (fileStream != null)
         {
-            fileStream.Close();
+
             streamWriter.Close();
+            fileStream.Close();
         }
         return result;
     }
