@@ -68,7 +68,6 @@ public class reglamentSMEV
         }
         return result;
     }
-
     public static bool getRequest_file13(string file, List<clsConnections> link_connections, string[] folders, ReglamentLinker reglamentLinker, out string result_comments)
     {
         result_comments = "";
@@ -85,32 +84,39 @@ public class reglamentSMEV
             adapterSmev1_3.Message message = adapterMessage.Message;
             if (message != null)
             {
-                string value = clsLibrary.string_Apostrophe(smevMetadata.MessageId) + "," +
-                    ((smevMetadata.ReferenceMessageID != null) ? clsLibrary.string_Apostrophe(smevMetadata.ReferenceMessageID) : clsLibrary.string_Apostrophe(smevMetadata.MessageId)) + "," +
-                    clsLibrary.string_Apostrophe(smevMetadata.TransactionCode);
-                //logQueue.Enqueue(new clsLog(DateTime.Now, 1, "Adapter_SMEV", 0, 0, DateTime.Now, DateTime.Now, meta.MessageId + "  GET / " + message.GetType().Name));
-
                 result_comments = message.GetType().Name;
                 switch (message.GetType().Name)
                 {
-                    case "StatusMessage":
-                        adapterSmev1_3.RequestMessageType requestMessageType = (adapterSmev1_3.RequestMessageType)message;
-                        break;
-                    case "ErrorMessage":
-                        adapterSmev1_3.ErrorMessage errorMessage = (adapterSmev1_3.ErrorMessage)message;
-                        break;
                     case "ResponseMessageType":
                         adapterSmev1_3.ResponseMessageType responseMessage = (adapterSmev1_3.ResponseMessageType)message;
+                        result_comments += " : " + message.messageType;
+                        switch (message.messageType)
+                        {
+                            case "StatusMessage":
+                                result = clsLibrary.execQuery(ref link_connections, null, "srz3_00_adapter"
+                                    , string.Format(@"update [SMEV_MESSAGES] set ACKRESPONSE ='{0}' where RESPONSE.value('(/clientId)[1]', 'varchar(max)') = '{1}'",
+                                    HelperXmlSmev.SerializeTo(responseMessage.ResponseContent, false, 2),
+                                    responseMessage.ResponseMetadata.replyToClientId)
+                                );
+                                break;
+                            case "ErrorMessage":
+                                adapterSmev1_3.ErrorMessage errorMessage = (adapterSmev1_3.ErrorMessage)message;
+                                break;
+                        }
                         break;
                     case "RequestMessageType":
                         adapterSmev1_3.RequestMessageType requestMessage = (adapterSmev1_3.RequestMessageType)message;
-                        if (clsLibrary.execQuery_insert(
-                             ref link_connections, null, "srz3_00_adapter"
-                            , "INSERT INTO SMEV_MESSAGES ([MESSAGEID],[REFERENCEMESSAGEID],[TRANSACTIONCODE]) VALUES "
-                            , value)
+                        string value = clsLibrary.string_Apostrophe(requestMessage.RequestMetadata.clientId) + "," +
+                            ((smevMetadata.ReferenceMessageID != null) ? clsLibrary.string_Apostrophe(smevMetadata.ReferenceMessageID) : clsLibrary.string_Apostrophe(smevMetadata.MessageId)) + "," +
+                            clsLibrary.string_Apostrophe(smevMetadata.TransactionCode);
+                        if (clsLibrary.execQuery_insert(ref link_connections, null, "srz3_00_adapter", "INSERT INTO SMEV_MESSAGES ([MESSAGEID],[REFERENCEMESSAGEID],[TRANSACTIONCODE]) VALUES ", value)
                             )
                         {
-                            result = processing_RequestMessage(ref link_connections, ref folders, smevMetadata.MessageId, requestMessage.RequestContent.content.MessagePrimaryContent, out processing_comments, file);
+                            result = processing_RequestMessage(ref link_connections, ref folders, requestMessage.RequestMetadata.clientId, requestMessage.RequestContent.content.MessagePrimaryContent, out processing_comments, file);
+                        }
+                        else
+                        {
+                            processing_comments = " ошибка вставки данных, возможно повторная обработка запроса (messageId)";
                         }
                         break;
                     default: //unknown messageType
@@ -119,12 +125,12 @@ public class reglamentSMEV
                 if (!result)
                     throw new Exception("...");
                 else
-                    result_comments += " - handled";
+                    result_comments += " - обработан";
             }
         }
         catch (Exception ss)
         {
-            result_comments = " error! in metod " + processing_comments;
+            result_comments = " ошибка! в методе : " + processing_comments;
         }
         return result;
     }
@@ -396,12 +402,6 @@ public class reglamentSMEV
     //Response USLUGI   
     public static bool sendResponse_USLUGI(string[] request, List<clsConnections> link_connections, string[] folders, out string comments)
     /*
-     * 0 - не обработанный
-     * 1 - принят в обработку
-     * 2 -
-     * 5 - завершена обработка с ошибкой
-     * 99 - завершена обработка корректно
-     * 
      * Ответ по схеме VS01113v001_TABL00
      */
     {
@@ -471,7 +471,8 @@ public class reglamentSMEV
                             })
                     }).DocumentElement;
                 } 
-                SendResponseMessage_VS01113v001_TABL00(ref folders, xmlElement, request[1], false); 
+                SendResponseMessage_VS01113v001_TABL00(ref folders, xmlElement, request[1], false);
+                result = true;
             }
             else // Ошибка получения сведений
             {
@@ -486,21 +487,22 @@ public class reglamentSMEV
             {
                 case "не найдено ЗЛ":
                     SendResponseMessage_VS01113v001_TABL00(ref folders, null, request[1], false);
+                    result = true;
                     break;
                 default:
                     break;
             }
         }
         // Изменяем статус запроса
-        string state;
-        if (comments == String.Empty || comments == "не найдено ЗЛ")
+        //string state;
+        /*if (comments == String.Empty || comments == "не найдено ЗЛ")
         {
             state = "99";
             result = true;
         }
         else state = "5";
         clsLibrary.execQuery(ref link_connections, null, "srz3_00_adapter",
-            String.Format("update SMEV_MESSAGES set STATE = '{0}' where ID = '{1}'", state, request[0]));
+            String.Format("update SMEV_MESSAGES set STATE = '{0}' where ID = '{1}'", state, request[0]));*/
         return result;
     }
     public static bool SendResponseMessage_VS01113v001_TABL00(ref string[] folders, XmlElement body, string _clientId, bool isTestMessage = true)
@@ -528,11 +530,295 @@ public class reglamentSMEV
                 RequestMessage = null,
                 ResponseMessage = response
             };
-            return saveXML_toFile2<adapterSmev1_2.ClientMessage>(clientMessage, Path.Combine(folders[1], string.Format("smev12_{0}.xml", _clientId)), Encoding.UTF8);
+            return saveXML_toFile2<adapterSmev1_2.ClientMessage>(clientMessage, Path.Combine(folders[1], string.Format("smev12-response-{0}.xml", _clientId)), Encoding.UTF8);
         }
         catch
         {
             return false;
+        }
+    }
+
+    public static bool sendResponse(string[] request, ref List<clsConnections> link_connections, ref string[] folders, out string comments)
+    {
+        bool result = false;
+        comments = string.Empty;
+        XmlElement xmlElement = null;
+        //в зависимости от типа данных получаем соответствующий контент
+        {
+            switch (request[2])
+            {
+                case "POLIS":
+                    //sendResponse_Polis(request_row);
+                    break;
+                case "USLUGI": //пока работает по старой ветке, контролируется в сервисе
+                    xmlElement = responseContent_VS01113v001_TABL00(ref link_connections, request[1], out comments);
+                    break;
+                case "FATALZP"://VS01285v001_TABL00
+                    xmlElement = responseContent_VS01285v001_TABL00(ref link_connections, request[1], out comments);
+                    break;
+                case "ROGDZP"://VS01287v001_TABL00
+                    xmlElement = responseContent_VS01287v001_TABL00(ref link_connections, request[1], out comments);
+                    break;
+                case "PERNAMEZP"://VS01284v001_TABL00
+                    xmlElement = responseContent_VS01284v001_TABL00(ref link_connections, request[1], out comments);
+                    break;
+            }            
+        }
+        if (comments == string.Empty)
+        {
+            object response = null;
+            string clientId = string.Empty;
+            ReglamentLinker reglamentLinker = new ReglamentLinker();
+            //в зависимости от версии схемы Адаптера
+            {                
+                reglamentLinker.getLink(null, null, null, null, request[2]);
+                switch (reglamentLinker.link.reglament_owner)
+                {
+                    case Reglament_owner.SMEV13:
+                        response = request_adapter1_3(null, xmlElement, request[1], out clientId, out comments);
+                        break;
+                    case Reglament_owner.SMEV12:
+                        response = request_adapter1_2(null, xmlElement, request[1], out clientId, out comments);
+                        break;
+                }                
+            }
+            if (comments == string.Empty)
+            {
+                clsLibrary.execQuery(ref link_connections, null, "srz3_00_adapter"
+                     , String.Format("update SMEV_MESSAGES set RESPONSE = '<clientId>{0}</clientId>' where MessageID = '{1}'", clientId, request[1]));
+                saveXML_toFile2<adapterSmev1_3.SendRequest>(response, Path.Combine(folders[1], string.Format("{0}-response-{1}.xml", reglamentLinker.link.reglament_owner.ToString(), request[1])), Encoding.UTF8);
+                result = true;
+            }
+        }
+        return result;
+    }
+    public static object request_adapter1_3(XmlElement requestContent, XmlElement responseContent, string replyClientId, out string _clientId, out string comments)
+    {
+        comments = string.Empty;
+        _clientId = Guid.NewGuid().ToString();
+        try
+        {
+            //Принимаем пока что Request не бывает, только Response
+            adapterSmev1_3.RequestMessageType requestMessage = null; // new adapterSmev1_3.RequestMessageType();
+            adapterSmev1_3.ResponseMessageType responseMessage = new adapterSmev1_3.ResponseMessageType()
+            {
+                messageType = "RESPONSE",
+                ResponseMetadata = new adapterSmev1_3.ResponseMetadataType()
+                {
+                    replyToClientId = replyClientId,
+                    clientId = _clientId
+                },
+                ResponseContent = new adapterSmev1_3.ResponseContentType()
+                {
+                    content = (responseContent != null) ? new adapterSmev1_3.Content() { MessagePrimaryContent = responseContent } : null,
+                    rejects = (responseContent != null) ? null : new adapterSmev1_3.Reject[] { new adapterSmev1_3.Reject() { code = adapterSmev1_3.RejectCode.NO_DATA, description = "Нет данных" } }
+                }
+            };
+            return new adapterSmev1_3.SendRequest()
+            {
+                itSystem = "ServiceSRZ",
+                RequestMessage = requestMessage,
+                ResponseMessage = responseMessage
+            };
+        }
+        catch
+        {
+            comments = "Ошибка формирования requestAdapter";
+            return null;
+        }
+    }
+    public static object request_adapter1_2(XmlElement requestContent, XmlElement responseContent, string replyClientId, out string _clientId, out string comments)
+    {
+        comments = string.Empty;
+        _clientId = Guid.NewGuid().ToString();
+        try
+        {
+            //Принимаем пока что Request не бывает, только Response
+            adapterSmev1_2.RequestMessageType requestMessage = null; // new adapterSmev1_3.RequestMessageType();
+            adapterSmev1_2.ResponseMessageType responseMessage = new adapterSmev1_2.ResponseMessageType()
+            {
+                messageType = "RESPONSE",
+                ResponseMetadata = new adapterSmev1_2.ResponseMetadataType()
+                {
+                    replyToClientId = replyClientId,
+                    clientId = _clientId
+                },
+                ResponseContent = new adapterSmev1_2.ResponseContentType()
+                {
+                    content = (responseContent != null) ? new adapterSmev1_2.Content() { MessagePrimaryContent = responseContent } : null,
+                    rejects = (responseContent != null) ? null : new adapterSmev1_2.Reject[] { new adapterSmev1_2.Reject() { code = adapterSmev1_2.RejectCode.NO_DATA, description = "Нет данных" } }
+                }
+            };
+            return new adapterSmev1_2.SendRequest()
+            {
+                itSystem = "ServiceSRZ",
+                RequestMessage = requestMessage,
+                ResponseMessage = responseMessage
+            };
+        }
+        catch
+        {
+            comments = "Ошибка формирования requestAdapter";
+            return null;
+        }
+    }
+    public static XmlElement responseContent_VS01113v001_TABL00(ref List<clsConnections> link_connections, string messageId, out string comments)
+    {
+        comments = messageId;// String.Empty;
+        try
+        {
+            XmlElement xmlElement = null;
+            List<string[]> response_content = new List<string[]>();
+            clsLibrary.ExecQurey_GetListStrings(link_connections, null, "srz3_00_adapter"
+                    , String.Format("select top 1 FAM,IM,OT,convert(varchar(10),DR,120) ,ENP,convert(varchar(10), DATEFROM,120), convert(varchar(10), DATETO,120) from KUTFOMS_USLUGI where idmessage = '{0}'", messageId),
+                ref response_content);
+            comments = response_content.Count.ToString();
+            string PID = clsLibrary.execQuery_getString(ref link_connections, null, "srz3_00"
+                    , String.Format("select top 1 id from people where isnull(fam,'') = '{0}' and isnull(im,'') = '{1}' and isnull(ot,'') = '{2}' and dr = '{3}' and ENP = '{4}' order by id desc", response_content[0][0], response_content[0][1], response_content[0][2], response_content[0][3], response_content[0][4])
+                );
+            if (PID != String.Empty)
+            {
+                comments = PID;
+                List<string[]> response = new List<string[]>();
+                // Получение данных реестров
+                if (clsLibrary.ExecQurey_PGR_GetListStrings(ref link_connections, null, "main_db",
+                        String.Format(
+                            "select request.MessageId, coalesce(ppl.id_pac,'0') id, usl.sumv_usl, to_char(z_sl.date_z_1,'YYYY-MM-DD'), to_char(z_sl.date_z_1,'YYYY-MM-DD'), z_sl.vidpom, z_sl.usl_ok, usl.code_usl, z_sl.lpu " +
+                            "from (select '{0}' as MessageId, {1} as pid) request " +
+                            "left outer join public.personal_info ppl on ppl.reg_id = request.pid " +
+                            "join public.z_sl z_sl on z_sl.id_pac = ppl.id_pac " +
+                            "join public.usl usl on usl.z_sl_id = z_sl.idcase where z_sl.date_z_2>='{2}' and z_sl.date_z_2<='{3}' " +
+                            "order by date_z_1",
+                        messageId, PID, response_content[0][5], response_content[0][6]),
+                        ref response, 60000)
+                    )
+                {
+                    if (response.Count != 0)
+                    {
+                        List<VS01113v001_TABL00.InsuredRenderingInfo> insuredRenderingList = new List<VS01113v001_TABL00.InsuredRenderingInfo>();
+                        for (int i = 0; i < response.Count(); i++)
+                        {
+                            VS01113v001_TABL00.InsuredRenderingInfo respone_data = new VS01113v001_TABL00.InsuredRenderingInfo();
+                            respone_data = new VS01113v001_TABL00.InsuredRenderingInfo
+                            {
+                                MedServicesSum = Convert.ToDecimal(response[i][2]),
+                                DateRenderingFrom = response[i][3], //. "2017-06-16",//DateTime. Now.AddDays(-2).Date,
+                                DateRenderingTo = response[i][4], //"2017-07-16",//DateTime.Now.AddDays(-2).Date,
+                                CareRegimen = HelperXmlSmev.getName_fromLibraies(ref link_connections, "VMPNAME", "libV008", "IDVMP", response[i][5]), //"первичная медико-санитарная помощь",
+                                CareType = HelperXmlSmev.getName_fromLibraies(ref link_connections, "UMPNAME", "libV006", "IDUMP", response[i][6]), //"Амбулаторно (в условиях, не предусматривающих круглосуточного медицинского наблюдения и лечения), в том числе на дому при вызове медицинского работника",
+                                Name = HelperXmlSmev.getName_fromLibraies(ref link_connections, "name", "libSp_usl", "code", response[i][7]), //"Тра-та-та"
+                                ClinicName = HelperXmlSmev.getName_fromLibraies(ref link_connections, "nam_mok", "libMo", "mcod", @response[i][8]), //"Ойля-ля"
+                                RegionName = "Амурская область"
+                            };
+                            insuredRenderingList.Add(respone_data);
+                        }
+                        xmlElement = (new XmlDocument(){
+                            InnerXml = HelperXmlSmev.SerializeTo(
+                                new VS01113v001_TABL00.OutputDataType()
+                                {
+                                    InsuredRenderingList = insuredRenderingList.ToArray()
+                                })
+                        }).DocumentElement;
+                    }                    
+                }
+                else // Ошибка получения сведений
+                {
+                    throw new System.ArgumentException("ошибка получения сведений МП ");
+                }
+            }
+            return xmlElement;
+        }
+        catch (Exception exception)
+        {
+            comments += " : Ошибка формирования InsuredRenderingInfo : " + exception.Message;
+            return null;
+        }
+    }
+    public static XmlElement responseContent_VS01285v001_TABL00(ref List<clsConnections> link_connections, string messageId, out string comments)
+    {
+        comments = string.Empty;
+        try
+        {//string txt = //"<ИдСведений><ИдСвед>123-123-123-123</ИдСвед></ИдСведений>";    
+            XmlDocument xmlDocument = new XmlDocument();
+            xmlDocument.LoadXml(
+                    clsLibrary.execQuery_getString(
+                     ref link_connections, null, "srz3_00_adapter"
+                     , String.Format("select REQUEST from SMEV_MESSAGES where MessageID = '{0}'", messageId)
+                 ));
+            XmlNodeList xmlNodeList = (xmlDocument.FirstChild).ChildNodes;            
+            return (//из-за не уточненного варианта ответа на множественный контент ЗАГСА, указывается только единственный ID
+                new XmlDocument()
+                {
+                    InnerXml = HelperXmlSmev.SerializeTo(
+                            new VS01285v001_TABL00.FATALZPResponse()
+                            {
+                                ИдСвед = xmlNodeList[0].InnerText,
+                                КодОбр = VS01285v001_TABL00.FATALZPResponseКодОбр.Item1
+                            })
+                }).DocumentElement;
+        }
+        catch
+        {
+            comments = "Ошибка формирования FATALZPResponse";
+            return null;
+        }
+    }
+    public static XmlElement responseContent_VS01287v001_TABL00(ref List<clsConnections> link_connections, string messageId, out string comments)
+    {
+        comments = string.Empty;
+        try
+        {//string txt = //"<ИдСведений><ИдСвед>123-123-123-123</ИдСвед></ИдСведений>";    
+            XmlDocument xmlDocument = new XmlDocument();
+            xmlDocument.LoadXml(
+                    clsLibrary.execQuery_getString(
+                     ref link_connections, null, "srz3_00_adapter"
+                     , String.Format("select REQUEST from SMEV_MESSAGES where MessageID = '{0}'", messageId)
+                 ));
+            XmlNodeList xmlNodeList = (xmlDocument.FirstChild).ChildNodes;
+            return (//из-за не уточненного варианта ответа на множественный контент ЗАГСА, указывается только единственный ID
+                new XmlDocument()
+                {
+                    InnerXml = HelperXmlSmev.SerializeTo(
+                            new VS01287v001_TABL00.ROGDZPResponse()
+                            {
+                                ИдСвед = xmlNodeList[0].InnerText,
+                                КодОбр = VS01287v001_TABL00.ROGDZPResponseКодОбр.Item1
+                            })
+                }).DocumentElement;
+        }
+        catch
+        {
+            comments = "Ошибка формирования ROGDZPResponse";
+            return null;
+        }
+    }
+    public static XmlElement responseContent_VS01284v001_TABL00(ref List<clsConnections> link_connections, string messageId, out string comments)
+    {
+        comments = string.Empty;
+        try
+        {//string txt = //"<ИдСведений><ИдСвед>123-123-123-123</ИдСвед></ИдСведений>";    
+            XmlDocument xmlDocument = new XmlDocument();
+            xmlDocument.LoadXml(
+                    clsLibrary.execQuery_getString(
+                     ref link_connections, null, "srz3_00_adapter"
+                     , String.Format("select REQUEST from SMEV_MESSAGES where MessageID = '{0}'", messageId)
+                 ));
+            XmlNodeList xmlNodeList = (xmlDocument.FirstChild).ChildNodes;
+            return (//из-за не уточненного варианта ответа на множественный контент ЗАГСА, указывается только единственный ID
+                new XmlDocument()
+                {
+                    InnerXml = HelperXmlSmev.SerializeTo(
+                            new VS01284v001_TABL00.PERNAMEZPResponse()
+                            {
+                                ИдСвед = xmlNodeList[0].InnerText,
+                                КодОбр = VS01284v001_TABL00.PERNAMEZPResponseКодОбр.Item1
+                            })
+                }).DocumentElement;
+        }
+        catch
+        {
+            comments = "Ошибка формирования PERNAMEZPResponse";
+            return null;
         }
     }
     public static bool saveXML_toFile1(ref XmlElement xmlElement, string file, Encoding encoding = null) // string messageId, string prefix)
@@ -590,30 +876,50 @@ public static class HelperXmlSmev
         //xmlns: ns2 = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types/faults" xmlns = "urn://x-artefacts-smev-gov-ru/services/service-adapter/types" >
     }
 
-    public static string SerializeTo<T>(this T xmlObject, bool useNamespaces = true)
+    public static string SerializeTo<T>(this T xmlObject, bool useNamespaces = true, int type = 1)
     {
-        XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
-        MemoryStream memoryStream = new MemoryStream();
-        XmlTextWriter xmlTextWriter = new XmlTextWriter(memoryStream, Encoding.UTF8);
-        xmlTextWriter.Formatting = Formatting.Indented;
-
-        if (useNamespaces)
+        if (type == 1)
         {
-            xmlSerializer.Serialize(xmlTextWriter, xmlObject, Namespaces);
-        }
-        else
-            xmlSerializer.Serialize(xmlTextWriter, xmlObject);
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
+            MemoryStream memoryStream = new MemoryStream();
+            XmlTextWriter xmlTextWriter = new XmlTextWriter(memoryStream, Encoding.UTF8);
+            xmlTextWriter.Formatting = Formatting.Indented;
 
-        string output = Encoding.UTF8.GetString(memoryStream.ToArray());
-        string _byteOrderMarkUtf8 = Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble());
-        if (output.StartsWith(_byteOrderMarkUtf8))
+            if (useNamespaces)
+            {
+                xmlSerializer.Serialize(xmlTextWriter, xmlObject, Namespaces);
+            }
+            else
+                xmlSerializer.Serialize(xmlTextWriter, xmlObject);
+
+            string output = Encoding.UTF8.GetString(memoryStream.ToArray());
+            string _byteOrderMarkUtf8 = Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble());
+            if (output.StartsWith(_byteOrderMarkUtf8))
+            {
+                output = output.Remove(0, _byteOrderMarkUtf8.Length);
+            }
+
+            return output;
+        }
+        else if (type == 2)
         {
-            output = output.Remove(0, _byteOrderMarkUtf8.Length);
-        }
+            var emptyNamespaces = new XmlSerializerNamespaces(new[] { XmlQualifiedName.Empty });
+            var serializer = new XmlSerializer(xmlObject.GetType());
+            var settings = new XmlWriterSettings();
+            settings.Indent = true;
+            settings.OmitXmlDeclaration = true;
 
-        return output;
+            using (var stream = new StringWriter())
+            using (var writer = XmlWriter.Create(stream, settings))
+            {
+                serializer.Serialize(writer, xmlObject, emptyNamespaces);
+                return stream.ToString();
+            }
+        }
+        else return null;
     }
-    public static T DeserializeFrom<T>(this XmlElement xml) where T : new()
+
+public static T DeserializeFrom<T>(this XmlElement xml) where T : new()
     {
         T xmlObject = new T();
         try
