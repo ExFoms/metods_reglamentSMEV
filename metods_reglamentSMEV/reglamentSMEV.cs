@@ -566,18 +566,30 @@ public class reglamentSMEV
             string PID = clsLibrary.execQuery_getString(ref link_connections, null, "srz3_00"
                     , String.Format("select top 1 id from people where isnull(fam,'') = '{0}' and isnull(im,'') = '{1}' and isnull(ot,'') = '{2}' and dr = '{3}' and ENP = '{4}' order by id desc", response_content[0][0], response_content[0][1], response_content[0][2], response_content[0][3], response_content[0][4])
                 );
-            if (PID != String.Empty)
+            if (PID != null && PID != String.Empty)
             {
                 List<string[]> response = new List<string[]>();
                 // Получение данных реестров
-                if (clsLibrary.ExecQurey_PGR_GetListStrings(ref link_connections, null, "main_db",
+                if (clsLibrary.ExecQurey_PGR_GetListStrings(ref link_connections, null, "my_db",
                         String.Format(
+                            "select MessageId, coalesce(id_pac,'0') id, sumv_usl, to_char(date_z_1,'YYYY-MM-DD') d1, to_char(date_z_2,'YYYY-MM-DD') d2, vidpom, usl_ok, code_usl,  lpu " +
+                            "from (select request.MessageId, ppl.id_pac, usl.sumv_usl, z_sl.date_z_1, z_sl.date_z_2, z_sl.vidpom, z_sl.usl_ok, usl.code_usl, z_sl.lpu " +
+                                "from(select '{0}' as MessageId, {1} pid) request " +
+                                "left outer join public.personal_info ppl on ppl.reg_id = request.pid " +
+                                "join public.z_sl z_sl on z_sl.guid_personal = ppl.guid " +
+                                "join public.sl sl on sl.guid_z_sl = z_sl.guid " +
+                                "join public.usl usl on usl.guid_sl = sl.guid " +
+                            ") list where date_z_2 >='{2}' and date_z_2 <='{3}' " +
+                            "order by date_z_1 ",
+
+                        /*
                             "select request.MessageId, coalesce(ppl.id_pac,'0') id, usl.sumv_usl, to_char(z_sl.date_z_1,'YYYY-MM-DD'), to_char(z_sl.date_z_1,'YYYY-MM-DD'), z_sl.vidpom, z_sl.usl_ok, usl.code_usl, z_sl.lpu " +
                             "from (select '{0}' as MessageId, {1} as pid) request " +
                             "left outer join public.personal_info ppl on ppl.reg_id = request.pid " +
                             "join public.z_sl z_sl on z_sl.id_pac = ppl.id_pac " +
                             "join public.usl usl on usl.z_sl_id = z_sl.idcase where z_sl.date_z_2>='{2}' and z_sl.date_z_2<='{3}' " +
                             "order by date_z_1",
+                        */
                         messageId, PID, response_content[0][5], response_content[0][6]),
                         ref response, 60000)
                     )
