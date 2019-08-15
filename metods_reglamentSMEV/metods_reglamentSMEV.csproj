@@ -32,12 +32,12 @@
     <DocumentationFile>..\..\..\..\..\release\dll\metods_reglamentSMEV.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="lib_classesAOFOMS, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\cloudData\release\dll\lib_classesAOFOMS.dll</HintPath>
-    </Reference>
     <Reference Include="lib_classesConections">
       <HintPath>..\..\..\..\..\release\dll\lib_classesConections.dll</HintPath>
+    </Reference>
+    <Reference Include="lib_classesLinker, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\release\dll\lib_classesLinker.dll</HintPath>
     </Reference>
     <Reference Include="lib_classesSMEV, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

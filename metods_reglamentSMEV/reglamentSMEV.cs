@@ -443,6 +443,9 @@ public class reglamentSMEV
                 case "PERNAMEZP"://VS01284v001_TABL00
                     xmlElement = responseContent_VS01284v001_TABL00(ref link_connections, request[1], out comments);
                     break;
+                case "INVALID"://VS00291v004_PFRF01
+                    xmlElement = requestContent_VS00291v004_PFRF01(ref link_connections, request[1], out comments);
+                    break;
             }            
         }
         if (comments == string.Empty)
@@ -450,43 +453,34 @@ public class reglamentSMEV
             object response = null;
             string clientId = string.Empty;
             ReglamentLinker reglamentLinker = new ReglamentLinker();
-            //в зависимости от версии схемы Адаптера
-            {                
-                reglamentLinker.getLink(null, null, null, null, request[2]);
-                switch (reglamentLinker.link.reglament_owner)
-                {
-                    case Reglament_owner.SMEV13:
-                        response = request_adapter1_3(null, xmlElement, request[1], out clientId, out comments);
-                        break;
-                    case Reglament_owner.SMEV12:
-                        response = request_adapter1_2(null, xmlElement, request[1], out clientId, out comments);
-                        break;
-                }                
-            }
-            if (comments == string.Empty)
+            reglamentLinker.getLink(null, null, null, null, request[2]);
+            clientId = Guid.NewGuid().ToString();
+            clsLibrary.execQuery(ref link_connections, null, "srz3_00_adapter"
+                 , String.Format("update SMEV_MESSAGES set RESPONSE = '<clientId>{0}</clientId>' where MessageID = '{1}'", clientId, request[1]));
+            switch (reglamentLinker.link.reglament_owner)
             {
-                clsLibrary.execQuery(ref link_connections, null, "srz3_00_adapter"
-                     , String.Format("update SMEV_MESSAGES set RESPONSE = '<clientId>{0}</clientId>' where MessageID = '{1}'", clientId, request[1]));
-                switch (reglamentLinker.link.reglament_owner)
-                {
-                    case Reglament_owner.SMEV13:
-                        response = request_adapter1_3(null, xmlElement, request[1], out clientId, out comments);
-                        saveXML_toFile2<adapterSmev1_3.SendRequest>(response, Path.Combine(folders[1], string.Format("{0}-response-{1}.xml", reglamentLinker.link.reglament_owner.ToString(), request[1])), Encoding.UTF8);
-                        break;
-                    case Reglament_owner.SMEV12:
-                        response = request_adapter1_2(null, xmlElement, request[1], out clientId, out comments);
-                        saveXML_toFile2<adapterSmev1_2.SendRequest>(response, Path.Combine(folders[1], string.Format("{0}-response-{1}.xml", reglamentLinker.link.reglament_owner.ToString(), request[1])), Encoding.UTF8);
-                        break;
-                }
-                result = true;
+                case Reglament_owner.SMEV13:
+                    saveXML_toFile2<adapterSmev1_3.SendRequest>(
+                        request_adapter1_3(null, xmlElement, request[1], clientId, out comments), 
+                        Path.Combine(folders[1], string.Format("{0}-response-{1}.xml", reglamentLinker.link.reglament_owner.ToString(), request[1])), 
+                        Encoding.UTF8
+                    );
+                    break;
+                case Reglament_owner.SMEV12:
+                    saveXML_toFile2<adapterSmev1_2.SendRequest>(
+                        request_adapter1_2(null, xmlElement, request[1], clientId, out comments), 
+                        Path.Combine(folders[1], string.Format("{0}-response-{1}.xml", reglamentLinker.link.reglament_owner.ToString(), request[1])), 
+                        Encoding.UTF8
+                    );
+                    break;
             }
+            result = true;
         }
         return result;
     }
-    public static object request_adapter1_3(XmlElement _requestContent, XmlElement _responseContent, string replyClientId, out string _clientId, out string comments)
+    public static object request_adapter1_3(XmlElement _requestContent, XmlElement _responseContent, string replyClientId, string _clientId, out string comments)
     {
         comments = string.Empty;
-        _clientId = Guid.NewGuid().ToString();
         try
         {
             //Принимаем пока что Request не бывает, только Response
@@ -518,14 +512,13 @@ public class reglamentSMEV
             return null;
         }
     }
-    public static object request_adapter1_2(XmlElement _requestContent, XmlElement _responseContent, string replyClientId, out string _clientId, out string comments)
+    public static object request_adapter1_2(XmlElement _requestContent, XmlElement _responseContent, string replyClientId, string _clientId, out string comments)
     {
         comments = string.Empty;
-        _clientId = Guid.NewGuid().ToString();
+        if (_clientId == null) { Guid.NewGuid().ToString(); }
         try
         {
-            //Принимаем пока что Request не бывает, только Response
-            adapterSmev1_2.RequestMessageType requestMessage = null; // new adapterSmev1_2.RequestMessageType();
+            /*adapterSmev1_2.RequestMessageType requestMessage = null; // new adapterSmev1_2.RequestMessageType();
             adapterSmev1_2.ResponseMessageType responseMessage = new adapterSmev1_2.ResponseMessageType()
             {
                 messageType = "RESPONSE",
@@ -545,6 +538,51 @@ public class reglamentSMEV
                 itSystem = "ServiceSRZ",
                 RequestMessage = requestMessage,
                 ResponseMessage = responseMessage
+            };*/
+            return new adapterSmev1_2.SendRequest()
+            {
+                itSystem = "ServiceSRZ",
+                // REQUEST
+                RequestMessage = (_requestContent == null) ?
+                    null :
+                    new adapterSmev1_2.RequestMessageType()
+                    {
+                        messageType = "REQUEST",
+                        RequestMetadata = new adapterSmev1_2.RequestMetadataType()
+                        {
+                            clientId = _clientId,
+                            /*
+                            linkedGroupIdentity = null,
+                            createGroupIdentity = null,
+                            nodeId = "",
+                            eol = DateTime.Now,
+                            testMessage = true,
+                            TransactionCode = "",
+                            BusinessProcessMetadata = null
+                            */
+                        },
+                        RequestContent = new adapterSmev1_2.RequestContentType()
+                        {
+                            content = new adapterSmev1_2.Content() { MessagePrimaryContent = _requestContent }
+                        }
+                    },
+                // RESPONSE
+                ResponseMessage = (_responseContent == null) ?
+                    null :
+                    new adapterSmev1_2.ResponseMessageType()
+                    {
+                        messageType = "RESPONSE",
+                        ResponseMetadata = new adapterSmev1_2.ResponseMetadataType()
+                        {
+                            replyToClientId = replyClientId,
+                            clientId = _clientId
+                        },
+                        ResponseContent = new adapterSmev1_2.ResponseContentType()
+                        {
+                            content = (_responseContent != null) ? new adapterSmev1_2.Content() { MessagePrimaryContent = _responseContent } : null,
+                            rejects = (_responseContent != null) ? null : new adapterSmev1_2.Reject[] { new adapterSmev1_2.Reject() { code = adapterSmev1_2.RejectCode.NO_DATA, description = "Нет данных" } }
+                        }
+                    }
             };
         }
         catch (Exception exception)
@@ -719,6 +757,40 @@ public class reglamentSMEV
         catch (Exception exception)
         {
             comments = "Ошибка формирования PERNAMEZPResponse : " + exception.Message;
+            return null;
+        }
+    }
+    public static XmlElement requestContent_VS00291v004_PFRF01(ref List<clsConnections> link_connections, string messageId, out string comments)
+    {
+        comments = string.Empty;
+        try
+        {//string txt = //"<ИдСведений><ИдСвед>123-123-123-123</ИдСвед></ИдСведений>";    
+            XmlDocument xmlDocument = new XmlDocument();
+            /*xmlDocument.LoadXml();
+            XmlNodeList xmlNodeList = (xmlDocument.FirstChild).ChildNodes;*/
+            return (
+                new XmlDocument()
+                {
+                    InnerXml = clsLibrary.SerializeTo(
+                            new VS00291v004_PFRF01.ExtractionInvalidDataRequest()
+                            {
+                                SNILS = "00000055500",
+                                TypeOfExtraction = VS00291v004_PFRF01.ExtractionInvalidDataRequestTypeOfExtraction.Stable,
+                                ExtractionPeriod = new VS00291v004_PFRF01.ExtractionPeriodType ()
+                                {
+                                    DocumentsValidOnDate = Convert.ToDateTime("2015-06-20"),
+                                    DocumentsOnPeriod = new VS00291v004_PFRF01.PeriodType()
+                                    {
+                                        DateFrom = Convert.ToDateTime("2014-08-13"),
+                                        DateTo = Convert.ToDateTime("2015-08-13")
+                                    }                                    
+                                } 
+                            })
+                }).DocumentElement;
+        }
+        catch (Exception exception)
+        {
+            comments = "Ошибка формирования : " + exception.Message;
             return null;
         }
     }
