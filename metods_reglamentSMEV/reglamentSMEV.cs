@@ -423,58 +423,65 @@ public class reglamentSMEV
     {
         bool result = false;
         comments = string.Empty;
-        XmlElement xmlElement = null;
-        //в зависимости от типа данных получаем соответствующий контент
+        try
         {
-            switch (request[2])
+            XmlElement xmlElement = null;
+            //в зависимости от типа данных получаем соответствующий контент
             {
-                case "POLIS":
-                    //sendResponse_Polis(request_row);
-                    break;
-                case "USLUGI": //пока работает по старой ветке, контролируется в сервисе
-                    xmlElement = responseContent_VS01113v001_TABL00(ref link_connections, request[0], out comments);
-                    break;
-                case "FATALZP"://VS01285v001_TABL00
-                    xmlElement = responseContent_VS01285v001_TABL00(ref link_connections, request[1], out comments);
-                    break;
-                case "ROGDZP"://VS01287v001_TABL00
-                    xmlElement = responseContent_VS01287v001_TABL00(ref link_connections, request[1], out comments);
-                    break;
-                case "PERNAMEZP"://VS01284v001_TABL00
-                    xmlElement = responseContent_VS01284v001_TABL00(ref link_connections, request[1], out comments);
-                    break;
-                case "INVALID"://VS00291v004_PFRF01
-                    xmlElement = requestContent_VS00291v004_PFRF01(ref link_connections, request[1], out comments);
-                    break;
-            }            
-        }
-        if (comments == string.Empty)
-        {
-            object response = null;
-            string clientId = string.Empty;
-            ReglamentLinker reglamentLinker = new ReglamentLinker();
-            reglamentLinker.getLink(null, null, null, null, request[2]);
-            clientId = Guid.NewGuid().ToString();
-            clsLibrary.execQuery(ref link_connections, null, "srz3_00_adapter"
-                 , String.Format("update SMEV_MESSAGES set RESPONSE = '<clientId>{0}</clientId>' where MessageID = '{1}'", clientId, request[1]));
-            switch (reglamentLinker.link.reglament_owner)
-            {
-                case Reglament_owner.SMEV13:
-                    saveXML_toFile2<adapterSmev1_3.SendRequest>(
-                        request_adapter1_3(null, xmlElement, request[1], clientId, out comments), 
-                        Path.Combine(folders[1], string.Format("{0}-response-{1}.xml", reglamentLinker.link.reglament_owner.ToString(), request[1])), 
-                        Encoding.UTF8
-                    );
-                    break;
-                case Reglament_owner.SMEV12:
-                    saveXML_toFile2<adapterSmev1_2.SendRequest>(
-                        request_adapter1_2(null, xmlElement, request[1], clientId, out comments), 
-                        Path.Combine(folders[1], string.Format("{0}-response-{1}.xml", reglamentLinker.link.reglament_owner.ToString(), request[1])), 
-                        Encoding.UTF8
-                    );
-                    break;
+                switch (request[2])
+                {
+                    case "POLIS":
+                        //sendResponse_Polis(request_row);
+                        break;
+                    case "USLUGI": //пока работает по старой ветке, контролируется в сервисе
+                        xmlElement = responseContent_VS01113v001_TABL00(ref link_connections, request[0], out comments);
+                        break;
+                    case "FATALZP"://VS01285v001_TABL00
+                        xmlElement = responseContent_VS01285v001_TABL00(ref link_connections, request[1], out comments);
+                        break;
+                    case "ROGDZP"://VS01287v001_TABL00
+                        xmlElement = responseContent_VS01287v001_TABL00(ref link_connections, request[1], out comments);
+                        break;
+                    case "PERNAMEZP"://VS01284v001_TABL00
+                        xmlElement = responseContent_VS01284v001_TABL00(ref link_connections, request[1], out comments);
+                        break;
+                    case "INVALID"://VS00291v004_PFRF01
+                        VS00291v004_PFRF01.ExtractionInvalidDataRequest tt = new VS00291v004_PFRF01.ExtractionInvalidDataRequest();
+                        xmlElement = requestContent_VS00291v004_PFRF01(ref link_connections, request[1], out comments, out tt);
+                        break;
+                }
             }
-            result = true;
+            if (comments == string.Empty)
+            {
+                string clientId = string.Empty;
+                ReglamentLinker reglamentLinker = new ReglamentLinker();
+                reglamentLinker.getLink(null, null, null, null, request[2]);
+                clientId = Guid.NewGuid().ToString();
+                clsLibrary.execQuery(ref link_connections, null, "srz3_00_adapter"
+                     , String.Format("update SMEV_MESSAGES set RESPONSE = '<clientId>{0}</clientId>' where MessageID = '{1}'", clientId, request[1]));
+                switch (reglamentLinker.link.reglament_owner)
+                {
+                    case Reglament_owner.SMEV13:
+                        saveXML_toFile2<adapterSmev1_3.SendRequest>(
+                            request_adapter1_3(null, (XmlElement)xmlElement, request[1], clientId, out comments),
+                            Path.Combine(folders[1], string.Format("{0}-response-{1}.xml", reglamentLinker.link.reglament_owner.ToString(), request[1])),
+                            Encoding.UTF8
+                        );
+                        break;
+                    case Reglament_owner.SMEV12:
+                        saveXML_toFile2<adapterSmev1_2.SendRequest>(
+                            request_adapter1_2(null, (XmlElement)xmlElement, request[1], clientId, out comments),
+                            Path.Combine(folders[1], string.Format("{0}-response-{1}.xml", reglamentLinker.link.reglament_owner.ToString(), request[1])),
+                            Encoding.UTF8
+                        );
+                        break;
+                }
+                result = true;
+            }
+        }
+        catch (Exception e)
+        {
+            comments = e.Message;
         }
         return result;
     }
@@ -608,26 +615,27 @@ public class reglamentSMEV
             {
                 List<string[]> response = new List<string[]>();
                 // Получение данных реестров
-                if (clsLibrary.ExecQurey_PGR_GetListStrings(ref link_connections, null, "my_db",
+                if (
+/*clsLibrary.ExecQurey_PGR_GetListStrings(ref link_connections, null, "my_db",
+    String.Format(
+        "select MessageId, coalesce(id_pac,'0') id, sumv_usl, to_char(date_z_1,'YYYY-MM-DD') d1, to_char(date_z_2,'YYYY-MM-DD') d2, vidpom, usl_ok, code_usl,  lpu " +
+        "from (select request.MessageId, ppl.id_pac, usl.sumv_usl, z_sl.date_z_1, z_sl.date_z_2, z_sl.vidpom, z_sl.usl_ok, usl.code_usl, z_sl.lpu " +
+            "from(select '{0}' as MessageId, {1} pid) request " +
+            "left outer join public.personal_info ppl on ppl.reg_id = request.pid " +
+            "join public.z_sl z_sl on z_sl.guid_personal = ppl.guid " +
+            "join public.sl sl on sl.guid_z_sl = z_sl.guid " +
+            "join public.usl usl on usl.guid_sl = sl.guid " +
+        ") list where date_z_2 >='{2}' and date_z_2 <='{3}' " +
+        "order by date_z_1 ", 
+    messageId, PID, response_content[0][5], response_content[0][6]),
+    ref response, 60000)*/
+                    clsLibrary.ExecQurey_PGR_GetListStrings(ref link_connections, null, "private_office",
                         String.Format(
-                            "select MessageId, coalesce(id_pac,'0') id, sumv_usl, to_char(date_z_1,'YYYY-MM-DD') d1, to_char(date_z_2,'YYYY-MM-DD') d2, vidpom, usl_ok, code_usl,  lpu " +
-                            "from (select request.MessageId, ppl.id_pac, usl.sumv_usl, z_sl.date_z_1, z_sl.date_z_2, z_sl.vidpom, z_sl.usl_ok, usl.code_usl, z_sl.lpu " +
-                                "from(select '{0}' as MessageId, {1} pid) request " +
-                                "left outer join public.personal_info ppl on ppl.reg_id = request.pid " +
-                                "join public.z_sl z_sl on z_sl.guid_personal = ppl.guid " +
-                                "join public.sl sl on sl.guid_z_sl = z_sl.guid " +
-                                "join public.usl usl on usl.guid_sl = sl.guid " +
-                            ") list where date_z_2 >='{2}' and date_z_2 <='{3}' " +
+                            "select MessageId, sumv_usl, to_char(date_z_1,'YYYY-MM-DD') d1, to_char(date_z_2,'YYYY-MM-DD') d2, vidpom, usl_ok, code_usl,  lpu " +
+                            "from( select request.MessageId, usl.sumv_usl, z_sl.date_z_1, z_sl.date_z_2, z_sl.vidpom, z_sl.usl_ok, usl.code_usl, z_sl.lpu " +
+                            "from(select '{0}' as MessageId, {1} pid) request left outer join public.z_sl z_sl on z_sl.pid = request.pid " +
+                            "join public.usl usl on usl.id_usl =z_sl.id_zsl ) list where date_z_2 >='{2}' and date_z_2 <='{3}' " +
                             "order by date_z_1 ",
-
-                        /*
-                            "select request.MessageId, coalesce(ppl.id_pac,'0') id, usl.sumv_usl, to_char(z_sl.date_z_1,'YYYY-MM-DD'), to_char(z_sl.date_z_1,'YYYY-MM-DD'), z_sl.vidpom, z_sl.usl_ok, usl.code_usl, z_sl.lpu " +
-                            "from (select '{0}' as MessageId, {1} as pid) request " +
-                            "left outer join public.personal_info ppl on ppl.reg_id = request.pid " +
-                            "join public.z_sl z_sl on z_sl.id_pac = ppl.id_pac " +
-                            "join public.usl usl on usl.z_sl_id = z_sl.idcase where z_sl.date_z_2>='{2}' and z_sl.date_z_2<='{3}' " +
-                            "order by date_z_1",
-                        */
                         messageId, PID, response_content[0][5], response_content[0][6]),
                         ref response, 60000)
                     )
@@ -640,13 +648,13 @@ public class reglamentSMEV
                             VS01113v001_TABL00.InsuredRenderingInfo respone_data = new VS01113v001_TABL00.InsuredRenderingInfo();
                             respone_data = new VS01113v001_TABL00.InsuredRenderingInfo
                             {
-                                MedServicesSum = Convert.ToDecimal(response[i][2]),
-                                DateRenderingFrom = response[i][3], //. "2017-06-16",//DateTime. Now.AddDays(-2).Date,
-                                DateRenderingTo = response[i][4], //"2017-07-16",//DateTime.Now.AddDays(-2).Date,
-                                CareRegimen = clsLibrary.getName_fromLibraies(ref link_connections, "VMPNAME", "libV008", "IDVMP", response[i][5]), //"первичная медико-санитарная помощь",
-                                CareType = clsLibrary.getName_fromLibraies(ref link_connections, "UMPNAME", "libV006", "IDUMP", response[i][6]), //"Амбулаторно (в условиях, не предусматривающих круглосуточного медицинского наблюдения и лечения), в том числе на дому при вызове медицинского работника",
-                                Name = clsLibrary.getName_fromLibraies(ref link_connections, "name", "libSp_usl", "code", response[i][7]), //"Тра-та-та"
-                                ClinicName = clsLibrary.getName_fromLibraies(ref link_connections, "nam_mok", "libMo", "mcod", @response[i][8]), //"Ойля-ля"
+                                MedServicesSum = Convert.ToDecimal(response[i][1]),
+                                DateRenderingFrom = response[i][2], //. "2017-06-16",//DateTime. Now.AddDays(-2).Date,
+                                DateRenderingTo = response[i][3], //"2017-07-16",//DateTime.Now.AddDays(-2).Date,
+                                CareRegimen = clsLibrary.getName_fromLibraies(ref link_connections, "VMPNAME", "libV008", "IDVMP", response[i][4]), //"первичная медико-санитарная помощь",
+                                CareType = clsLibrary.getName_fromLibraies(ref link_connections, "UMPNAME", "libV006", "IDUMP", response[i][5]), //"Амбулаторно (в условиях, не предусматривающих круглосуточного медицинского наблюдения и лечения), в том числе на дому при вызове медицинского работника",
+                                Name = clsLibrary.getName_fromLibraies(ref link_connections, "name", "libSp_usl", "code", response[i][6]), //"Тра-та-та"
+                                ClinicName = clsLibrary.getName_fromLibraies(ref link_connections, "nam_mok", "libMo", "mcod", @response[i][7]), //"Ойля-ля"
                                 RegionName = "Амурская область"
                             };
                             insuredRenderingList.Add(respone_data);
@@ -760,33 +768,49 @@ public class reglamentSMEV
             return null;
         }
     }
-    public static XmlElement requestContent_VS00291v004_PFRF01(ref List<clsConnections> link_connections, string messageId, out string comments)
+    public static XmlElement requestContent_VS00291v004_PFRF01(ref List<clsConnections> link_connections, string messageId, out string comments, out VS00291v004_PFRF01.ExtractionInvalidDataRequest ttt)
     {
         comments = string.Empty;
+        ttt = new VS00291v004_PFRF01.ExtractionInvalidDataRequest()
+        {
+            SNILS = "00000055500",
+            TypeOfExtraction = VS00291v004_PFRF01.ExtractionInvalidDataRequestTypeOfExtraction.Stable,
+            ExtractionPeriod = new VS00291v004_PFRF01.ExtractionPeriodType()
+            {                
+                DocumentsValidOnDate = Convert.ToDateTime("2015-06-20"),
+                DocumentsValidOnDateSpecified = true,
+                DocumentsOnPeriod = new VS00291v004_PFRF01.PeriodType()
+                {
+                    DateFrom = Convert.ToDateTime("2014-08-13"),
+                    DateTo = Convert.ToDateTime("2015-08-13")
+                }
+            }
+        };
         try
         {//string txt = //"<ИдСведений><ИдСвед>123-123-123-123</ИдСвед></ИдСведений>";    
             XmlDocument xmlDocument = new XmlDocument();
             /*xmlDocument.LoadXml();
             XmlNodeList xmlNodeList = (xmlDocument.FirstChild).ChildNodes;*/
-            return (
-                new XmlDocument()
-                {
-                    InnerXml = clsLibrary.SerializeTo(
+            // return (
+            xmlDocument = new XmlDocument()
+            {
+                InnerXml = clsLibrary.SerializeTo(
                             new VS00291v004_PFRF01.ExtractionInvalidDataRequest()
                             {
                                 SNILS = "00000055500",
                                 TypeOfExtraction = VS00291v004_PFRF01.ExtractionInvalidDataRequestTypeOfExtraction.Stable,
-                                ExtractionPeriod = new VS00291v004_PFRF01.ExtractionPeriodType ()
+                                ExtractionPeriod = new VS00291v004_PFRF01.ExtractionPeriodType()
                                 {
                                     DocumentsValidOnDate = Convert.ToDateTime("2015-06-20"),
                                     DocumentsOnPeriod = new VS00291v004_PFRF01.PeriodType()
                                     {
                                         DateFrom = Convert.ToDateTime("2014-08-13"),
                                         DateTo = Convert.ToDateTime("2015-08-13")
-                                    }                                    
-                                } 
+                                    }
+                                }
                             })
-                }).DocumentElement;
+            };//).DocumentElement;
+            return xmlDocument.DocumentElement;
         }
         catch (Exception exception)
         {
