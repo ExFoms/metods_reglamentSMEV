@@ -463,14 +463,14 @@ public class reglamentSMEV
                 {
                     case Reglament_owner.SMEV13:
                         saveXML_toFile2<adapterSmev1_3.SendRequest>(
-                            request_adapter1_3(null, (XmlElement)xmlElement, request[1], clientId, out comments),
+                            request_adapter1_3(null, xmlElement, request[1], clientId, out comments),
                             Path.Combine(folders[1], string.Format("{0}-response-{1}.xml", reglamentLinker.link.reglament_owner.ToString(), request[1])),
                             Encoding.UTF8
                         );
                         break;
                     case Reglament_owner.SMEV12:
                         saveXML_toFile2<adapterSmev1_2.SendRequest>(
-                            request_adapter1_2(null, (XmlElement)xmlElement, request[1], clientId, out comments),
+                            request_adapter1_2(null, xmlElement, request[1], clientId, out comments),
                             Path.Combine(folders[1], string.Format("{0}-response-{1}.xml", reglamentLinker.link.reglament_owner.ToString(), request[1])),
                             Encoding.UTF8
                         );
@@ -574,8 +574,7 @@ public class reglamentSMEV
                         }
                     },
                 // RESPONSE
-                ResponseMessage = (_responseContent == null) ?
-                    null :
+                ResponseMessage = 
                     new adapterSmev1_2.ResponseMessageType()
                     {
                         messageType = "RESPONSE",
