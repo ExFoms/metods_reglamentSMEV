@@ -147,14 +147,14 @@ public class reglamentSMEV
             {
                 case "VS01285v001_TABL00":
                 case "VS01285v002_TABL00":
-                    result = clsLibrary.execQuery(ref link_connections, null, "srz3_00_adapter", String.Format("update SMEV_MESSAGES set TipData = '{0}' where MessageID = '{1}'", reglamentLinker.link.prefixFile, messageId));
-                    break;
                 case "VS00648v001_PFR001":
                 case "VS01112v001_TABL00":
                 case "VS01113v001_TABL00":                
                 case "VS01287v001_TABL00":
+                case "VS01287v002_TABL00":
                 case "VS01284v001_TABL00":
-                    result = clsLibrary.execQuery(ref link_connections, null, "srz3_00_adapter",String.Format("update SMEV_MESSAGES set TipData = '{0}' where MessageID = '{1}'", reglamentLinker.link.prefixFile, messageId));
+                case "VS01284v002_TABL00":
+                    result = clsLibrary.execQuery(ref link_connections, null, "srz3_00_adapter", String.Format("update SMEV_MESSAGES set TipData = '{0}' where MessageID = '{1}'", reglamentLinker.link.prefixFile, messageId));
                     break;
                 default: //unknown schema
                     clsLibrary.execQuery(ref link_connections, null, "srz3_00_adapter",String.Format("update SMEV_MESSAGES set TipData = '{0}' where MessageID = '{1}'", "UNKNONE", messageId));
@@ -188,8 +188,14 @@ public class reglamentSMEV
                     case "VS01287v001_TABL00": //Сведения и ЕГР ЗАГС о государственной регистрации рождения  
                         result = processing_VS01287v001_TABL00(ref link_connections, messageId, xmlElement, out comments);
                         break;
+                    case "VS01287v002_TABL00": //Сведения и ЕГР ЗАГС о государственной регистрации рождения  
+                        result = processing_VS01287v002_TABL00(ref link_connections, messageId, xmlElement, out comments);
+                        break;
                     case "VS01284v001_TABL00": //Сведения из ЕГР ЗАГС о государственной регистрации перемены имени        
                         result = processing_VS01284v001_TABL00(ref link_connections, messageId, xmlElement, out comments);
+                        break;
+                    case "VS01284v002_TABL00": //Сведения из ЕГР ЗАГС о государственной регистрации перемены имени        
+                        result = processing_VS01284v002_TABL00(ref link_connections, messageId, xmlElement, out comments);
                         break;
                 }
                 if (!result) throw new Exception("Ошибка записи контента в базу");
@@ -199,8 +205,11 @@ public class reglamentSMEV
                     switch (reglamentLinker.link.schemaClassRoot.Name)
                     {
                         case "VS01285v001_TABL00": //Сведения из ЕГР ЗАГС о государственной регистрации смерти
-                        case "VS01287v001_TABL00": //Сведения и ЕГР ЗАГС о государственной регистрации рождения                
+                        case "VS01285v002_TABL00": //Сведения из ЕГР ЗАГС о государственной регистрации смерти
+                        case "VS01287v001_TABL00": //Сведения и ЕГР ЗАГС о государственной регистрации рождения 
+                        case "VS01287v002_TABL00": //Сведения и ЕГР ЗАГС о государственной регистрации рождения
                         case "VS01284v001_TABL00": //Сведения из ЕГР ЗАГС о государственной регистрации перемены имени
+                        case "VS01284v002_TABL00": //Сведения из ЕГР ЗАГС о государственной регистрации перемены имени
                             try
                             {
                                 File.Copy(file, Path.Combine(folders[0], String.Format("{0}-{1}.xml", reglamentLinker.link.prefixFile, messageId)), true);
@@ -419,6 +428,51 @@ public class reglamentSMEV
     }
 
     /// <summary>
+    /// Сведения и ЕГР ЗАГС о государственной регистрации рождения 
+    /// </summary>
+    /// <param name="link_connections">Список подключений</param>
+    /// <param name="messageId">Входящий ClientId, не путать с MessageId конверта</param>
+    /// <param name="xmlElement">Бизнес данные</param>
+    /// <param name="comments">Исходящий комментарий, результат работы. Если пустой - завершено корректно</param>    
+    private static bool processing_VS01287v002_TABL00(ref List<clsConnections> link_connections, string messageId, XmlElement xmlElement, out string comments)
+    {
+        comments = string.Empty;
+        XmlDocument ИдСведений = new XmlDocument();
+        try
+        {
+            XmlDocument xmlDocument = new XmlDocument();
+            xmlDocument.LoadXml(xmlElement.InnerXml);
+            var inputData = clsLibrary.DeserializeFrom<adapterSmev1_3_smev_message_exchange_directive.Registry>((XmlElement)xmlElement.FirstChild);
+            if (inputData == null) throw new System.ArgumentException("неверная схема");
+            XmlElement root = ИдСведений.DocumentElement;
+            XmlElement element1 = ИдСведений.CreateElement(string.Empty, "ИдСведений", string.Empty);
+            ИдСведений.AppendChild(element1);
+            foreach (adapterSmev1_3_smev_message_exchange_directive.RegistryRecord registryRecord in inputData.RegistryRecord)
+            {
+                var ROGDZPRequest = clsLibrary.DeserializeFrom<VS01287v002_TABL00.ROGDZPRequest>(registryRecord.Record.RecordContent.Any);
+                XmlElement element2 = ИдСведений.CreateElement(string.Empty, "ИдСвед", string.Empty);
+                element1.AppendChild(element2);
+                element2.AppendChild(ИдСведений.CreateTextNode(ROGDZPRequest.ИдСвед));
+            }
+        }
+        catch (Exception exception)
+        {
+            comments = exception.Message;
+            return false;
+        }
+        if (clsLibrary.execQuery(ref link_connections, null, "srz3_00_adapter",
+                string.Format("UPDATE SMEV_MESSAGES set request = '{0}' where MessageID = '{1}'", ИдСведений.InnerXml, messageId)))
+        {
+            return true;
+        }
+        else
+        {
+            comments = "ошибка вставки данных";
+            return false;
+        }
+    }
+
+    /// <summary>
     /// Сведения из ЕГР ЗАГС о государственной регистрации перемены имени 
     /// </summary>
     /// <param name="link_connections">Список подключений</param>
@@ -441,6 +495,50 @@ public class reglamentSMEV
             foreach (adapterSmev1_3_smev_message_exchange_directive.RegistryRecord registryRecord in inputData.RegistryRecord)
             {
                 var ROGDZPRequest = clsLibrary.DeserializeFrom<VS01284v001_TABL00.PERNAMEZPRequest>(registryRecord.Record.RecordContent.Any);
+                XmlElement element2 = ИдСведений.CreateElement(string.Empty, "ИдСвед", string.Empty);
+                element1.AppendChild(element2);
+                element2.AppendChild(ИдСведений.CreateTextNode(ROGDZPRequest.ИдСвед));
+            }
+        }
+        catch (Exception exception)
+        {
+            comments = exception.Message;
+            return false;
+        }
+        if (clsLibrary.execQuery(ref link_connections, null, "srz3_00_adapter",
+                string.Format("UPDATE SMEV_MESSAGES set request = '{0}' where MessageID = '{1}'", ИдСведений.InnerXml, messageId)))
+        {
+            return true;
+        }
+        else
+        {
+            comments = "ошибка вставки данных";
+            return false;
+        }
+    }
+    /// <summary>
+    /// Сведения из ЕГР ЗАГС о государственной регистрации перемены имени 
+    /// </summary>
+    /// <param name="link_connections">Список подключений</param>
+    /// <param name="messageId">Входящий ClientId, не путать с MessageId конверта</param>
+    /// <param name="xmlElement">Бизнес данные</param>
+    /// <param name="comments">Исходящий комментарий, результат работы. Если пустой - завершено корректно</param>    
+    private static bool processing_VS01284v002_TABL00(ref List<clsConnections> link_connections, string messageId, XmlElement xmlElement, out string comments)
+    {
+        comments = string.Empty;
+        XmlDocument ИдСведений = new XmlDocument();
+        try
+        {
+            XmlDocument xmlDocument = new XmlDocument();
+            xmlDocument.LoadXml(xmlElement.InnerXml);
+            var inputData = clsLibrary.DeserializeFrom<adapterSmev1_3_smev_message_exchange_directive.Registry>((XmlElement)xmlElement.FirstChild);
+            if (inputData == null) throw new System.ArgumentException("неверная схема");
+            XmlElement root = ИдСведений.DocumentElement;
+            XmlElement element1 = ИдСведений.CreateElement(string.Empty, "ИдСведений", string.Empty);
+            ИдСведений.AppendChild(element1);
+            foreach (adapterSmev1_3_smev_message_exchange_directive.RegistryRecord registryRecord in inputData.RegistryRecord)
+            {
+                var ROGDZPRequest = clsLibrary.DeserializeFrom<VS01284v002_TABL00.PERNAMEZPRequest>(registryRecord.Record.RecordContent.Any);
                 XmlElement element2 = ИдСведений.CreateElement(string.Empty, "ИдСвед", string.Empty);
                 element1.AppendChild(element2);
                 element2.AppendChild(ИдСведений.CreateTextNode(ROGDZPRequest.ИдСвед));
@@ -485,11 +583,17 @@ public class reglamentSMEV
                     case "FATALZP-4.0.1"://VS01285v002_TABL00
                         xmlElement = responseContent_VS01285v002_TABL00(ref link_connections, request[1], out comments);
                         break;
-                    case "ROGDZP"://VS01287v001_TABL00
+                    case "ROGDZP-4.0.0"://VS01287v001_TABL00
                         xmlElement = responseContent_VS01287v001_TABL00(ref link_connections, request[1], out comments);
                         break;
-                    case "PERNAMEZP"://VS01284v001_TABL00
+                    case "ROGDZP-4.0.1"://VS01287v002_TABL00
+                        xmlElement = responseContent_VS01287v002_TABL00(ref link_connections, request[1], out comments);
+                        break;
+                    case "PERNAMEZP-4.0.0"://VS01284v001_TABL00
                         xmlElement = responseContent_VS01284v001_TABL00(ref link_connections, request[1], out comments);
+                        break;
+                    case "PERNAMEZP-4.0.1"://VS01284v001_TABL00
+                        xmlElement = responseContent_VS01284v002_TABL00(ref link_connections, request[1], out comments);
                         break;
                     case "INVALID"://VS00291v004_PFRF01
                         VS00291v004_PFRF01.ExtractionInvalidDataRequest tt = new VS00291v004_PFRF01.ExtractionInvalidDataRequest();
@@ -816,6 +920,35 @@ public class reglamentSMEV
             return null;
         }
     }
+    public static XmlElement responseContent_VS01287v002_TABL00(ref List<clsConnections> link_connections, string messageId, out string comments)
+    {
+        comments = string.Empty;
+        try
+        {//string txt = //"<ИдСведений><ИдСвед>123-123-123-123</ИдСвед></ИдСведений>";    
+            XmlDocument xmlDocument = new XmlDocument();
+            xmlDocument.LoadXml(
+                    clsLibrary.execQuery_getString(
+                     ref link_connections, null, "srz3_00_adapter"
+                     , String.Format("select REQUEST from SMEV_MESSAGES where MessageID = '{0}'", messageId)
+                 ));
+            XmlNodeList xmlNodeList = (xmlDocument.FirstChild).ChildNodes;
+            return (//из-за не уточненного варианта ответа на множественный контент ЗАГСА, указывается только единственный ID
+                new XmlDocument()
+                {
+                    InnerXml = clsLibrary.SerializeTo(
+                            new VS01287v002_TABL00.ROGDZPResponse()
+                            {
+                                ИдСвед = xmlNodeList[0].InnerText,
+                                КодОбр = VS01287v002_TABL00.ROGDZPResponseКодОбр.Item1
+                            })
+                }).DocumentElement;
+        }
+        catch (Exception exception)
+        {
+            comments = "Ошибка формирования ROGDZPResponse : " + exception.Message;
+            return null;
+        }
+    }
     public static XmlElement responseContent_VS01284v001_TABL00(ref List<clsConnections> link_connections, string messageId, out string comments)
     {
         comments = string.Empty;
@@ -836,6 +969,35 @@ public class reglamentSMEV
                             {
                                 ИдСвед = xmlNodeList[0].InnerText,
                                 КодОбр = VS01284v001_TABL00.PERNAMEZPResponseКодОбр.Item1
+                            })
+                }).DocumentElement;
+        }
+        catch (Exception exception)
+        {
+            comments = "Ошибка формирования PERNAMEZPResponse : " + exception.Message;
+            return null;
+        }
+    }
+    public static XmlElement responseContent_VS01284v002_TABL00(ref List<clsConnections> link_connections, string messageId, out string comments)
+    {
+        comments = string.Empty;
+        try
+        {//string txt = //"<ИдСведений><ИдСвед>123-123-123-123</ИдСвед></ИдСведений>";    
+            XmlDocument xmlDocument = new XmlDocument();
+            xmlDocument.LoadXml(
+                    clsLibrary.execQuery_getString(
+                     ref link_connections, null, "srz3_00_adapter"
+                     , String.Format("select REQUEST from SMEV_MESSAGES where MessageID = '{0}'", messageId)
+                 ));
+            XmlNodeList xmlNodeList = (xmlDocument.FirstChild).ChildNodes;
+            return (//из-за не уточненного варианта ответа на множественный контент ЗАГСА, указывается только единственный ID
+                new XmlDocument()
+                {
+                    InnerXml = clsLibrary.SerializeTo(
+                            new VS01284v002_TABL00.PERNAMEZPResponse()
+                            {
+                                ИдСвед = xmlNodeList[0].InnerText,
+                                КодОбр = VS01284v002_TABL00.PERNAMEZPResponseКодОбр.Item01
                             })
                 }).DocumentElement;
         }
